@@ -10,10 +10,7 @@ const LeadModalContext = createContext<LeadModalState | null>(null);
 
 export function LeadModalProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
-  const value = useMemo(
-    () => ({ open, setOpen, openModal: () => setOpen(true) }),
-    [open],
-  );
+  const value = useMemo(() => ({ open, setOpen, openModal: () => setOpen(true) }), [open]);
 
   return <LeadModalContext.Provider value={value}>{children}</LeadModalContext.Provider>;
 }

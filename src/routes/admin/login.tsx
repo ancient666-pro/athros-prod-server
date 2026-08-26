@@ -14,7 +14,10 @@ export const Route = createFileRoute("/admin/login")({
   head: () => ({
     meta: [
       { title },
-      { name: "description", content: "Restricted Athros staff access to the delivery control panel." },
+      {
+        name: "description",
+        content: "Restricted Athros staff access to the delivery control panel.",
+      },
       { property: "og:title", content: title },
       { property: "og:description", content: "Restricted Athros staff access." },
       { property: "og:type", content: "website" },
@@ -83,8 +86,8 @@ function AdminLoginPage() {
             Athros staff sign in
           </h1>
           <p className="mt-2 text-[13.5px] text-muted-foreground">
-            Delivery control panel access for Athros team accounts only. Client accounts
-            should use the client portal.
+            Delivery control panel access for Athros team accounts only. Client accounts should use
+            the client portal.
           </p>
 
           <form onSubmit={handleSubmit} className="mt-6 grid gap-4">

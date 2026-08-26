@@ -3,7 +3,8 @@
  * (platform log drain); durable rows go to `public.app_logs` for staff review.
  */
 export type LogLevel = "debug" | "info" | "warn" | "error";
-export type LogChannel = "app" | "db" | "security" | "audit" | "performance" | "webhook" | "email" | "queue";
+export type LogChannel =
+  "app" | "db" | "security" | "audit" | "performance" | "webhook" | "email" | "queue";
 
 export interface LogContext {
   readonly requestId?: string;

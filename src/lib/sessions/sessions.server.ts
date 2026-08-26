@@ -107,7 +107,9 @@ export async function rotateSession(
   const db = await admin();
   const { data: current } = await db
     .from("user_sessions")
-    .select("id, user_id, revoked, remember_me, ip, user_agent, country, fingerprint, device, browser, os")
+    .select(
+      "id, user_id, revoked, remember_me, ip, user_agent, country, fingerprint, device, browser, os",
+    )
     .eq("id", sessionId)
     .maybeSingle();
 

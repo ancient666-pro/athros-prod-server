@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Menu, MoonStar, Sun, X } from "lucide-react";
+import { Menu, MoonStar, Sun, X, ArrowRight } from "lucide-react";
 import { MagneticButton, scrollToSection, useActiveSection } from "./primitives";
 import { cn } from "@/lib/utils";
 
@@ -81,7 +81,6 @@ export function Nav() {
           ))}
         </ul>
 
-
         <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
@@ -92,9 +91,14 @@ export function Nav() {
             {dark ? <Sun className="h-4 w-4" /> : <MoonStar className="h-4 w-4" />}
           </button>
           <MagneticButton
-            href="/login"
-            className="hidden px-5 py-2.5 text-[13px] sm:inline-flex"
+            href="/booking"
+            className="hidden px-5 py-2.5 text-[13px] sm:inline-flex bg-gradient-nv text-[oklch(0.18_0.03_130)] shadow-[0_4px_20px_-4px_var(--nv)] hover:shadow-[0_8px_30px_-4px_var(--nv)] font-semibold transition-all duration-300 focus-visible:ring-2 focus-visible:ring-nv focus-visible:ring-offset-2 active:scale-[0.98]"
           >
+            Book Project
+            <ArrowRight className="ml-2 h-3.5 w-3.5" />
+            <span className="pointer-events-none absolute inset-y-0 w-full bg-[linear-gradient(100deg,transparent_0%,oklch(1_0_0/40%)_50%,transparent_100%)] animate-shimmer" />
+          </MagneticButton>
+          <MagneticButton href="/login" className="hidden px-5 py-2.5 text-[13px] sm:inline-flex">
             Sign In
           </MagneticButton>
 
@@ -130,9 +134,18 @@ export function Nav() {
                 >
                   {link.label}
                 </a>
-
               </li>
             ))}
+            <li>
+              <a
+                href="/booking"
+                onClick={() => setOpen(false)}
+                className="relative mt-1 block overflow-hidden rounded-2xl bg-gradient-nv px-4 py-3 text-center text-sm font-semibold text-[oklch(0.18_0.03_130)] shadow-[0_4px_20px_-4px_var(--nv)] transition-transform active:scale-[0.98]"
+              >
+                Book Project
+                <span className="pointer-events-none absolute inset-y-0 w-full bg-[linear-gradient(100deg,transparent_0%,oklch(1_0_0/40%)_50%,transparent_100%)] animate-shimmer" />
+              </a>
+            </li>
             <li>
               <a
                 href="/login"
@@ -143,7 +156,6 @@ export function Nav() {
               </a>
             </li>
           </ul>
-
         </div>
       ) : null}
     </header>

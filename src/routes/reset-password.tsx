@@ -14,7 +14,10 @@ export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
       { title },
-      { name: "description", content: "Choose a new password for your Athros command center account." },
+      {
+        name: "description",
+        content: "Choose a new password for your Athros command center account.",
+      },
       { property: "og:title", content: title },
       { property: "og:description", content: "Choose a new password for your Athros account." },
       { property: "og:type", content: "website" },
@@ -105,8 +108,7 @@ function ResetPasswordPage() {
           </form>
         ) : (
           <p className="mt-4 text-[13.5px] text-muted-foreground">
-            This reset link is invalid or has expired. Request a new one from the sign-in
-            page.
+            This reset link is invalid or has expired. Request a new one from the sign-in page.
           </p>
         )}
       </div>

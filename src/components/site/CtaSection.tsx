@@ -1,13 +1,13 @@
 import { ArrowUpRight, Rocket } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { MagneticButton, Reveal } from "./primitives";
-import { useLeadModal } from "./lead-modal-context";
 
 const PHONE = "+13154820199";
 const BOOKING_URL =
   import.meta.env.VITE_BOOKING_URL ?? "https://calendly.com/athros/discovery-call";
 
 export function CtaSection() {
-  const { openModal } = useLeadModal();
+  const navigate = useNavigate();
 
   const handleDiscoveryCall = () => {
     const isMobile =
@@ -41,27 +41,22 @@ export function CtaSection() {
           <div className="relative z-10 mx-auto max-w-2xl">
             <h2 className="text-3xl leading-[1.05] font-semibold text-[oklch(0.99_0_0)] sm:text-5xl">
               Ready to build the next{" "}
-              <span className="text-gradient-bright">
-                billion-dollar app?
-              </span>
+              <span className="text-gradient-bright">billion-dollar app?</span>
             </h2>
             <p className="mt-4 text-[15px] text-[oklch(0.82_0.01_260)]">
               From idea to production in days — not months.
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-3">
               <MagneticButton
-                href="#contact"
-                onClick={(event) => {
-                  event.preventDefault();
-                  openModal();
-                }}
+                onClick={() =>
+                  navigate({ to: "/booking", search: { package: "production_ready" } })
+                }
                 className="bg-gradient-nv text-[oklch(0.18_0.03_130)]"
               >
                 <Rocket className="h-4 w-4" />
                 Unleash Your Empire
               </MagneticButton>
               <MagneticButton
-                href={BOOKING_URL}
                 onClick={(event) => {
                   event.preventDefault();
                   handleDiscoveryCall();

@@ -88,22 +88,11 @@ export const frameworkLogos: Record<string, LogoEntry> = {
   Deploy: { hex: "#2088FF", fallback: Rocket },
 };
 
-export function FrameworkLogo({
-  name,
-  className,
-}: {
-  name: string;
-  className?: string;
-}) {
+export function FrameworkLogo({ name, className }: { name: string; className?: string }) {
   const entry = frameworkLogos[name];
 
   if (!entry) {
-    return (
-      <span
-        aria-hidden="true"
-        className={cn("h-1.5 w-1.5 rounded-full bg-nv", className)}
-      />
-    );
+    return <span aria-hidden="true" className={cn("h-1.5 w-1.5 rounded-full bg-nv", className)} />;
   }
 
   if (!entry.path && entry.fallback) {

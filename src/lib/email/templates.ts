@@ -50,6 +50,28 @@ export const EMAIL_TEMPLATES = {
     company: z.string().optional(),
     email: z.string().email(),
   }),
+  "booking.confirmed": z.object({
+    bookingNumber: z.string().min(1),
+    package: z.string().min(1),
+    tokenAmount: z.string().min(1),
+    currency: z.string().min(1),
+  }),
+  "booking.admin_notification": z.object({
+    bookingNumber: z.string().min(1),
+    customerName: z.string().min(1),
+    customerEmail: z.string().email(),
+    customerPhone: z.string().optional(),
+    company: z.string().optional(),
+    package: z.string().min(1),
+    region: z.string().min(1),
+    currency: z.string().min(1),
+    fullAmount: z.string().min(1),
+    tokenAmount: z.string().min(1),
+    paymentStatus: z.string().min(1),
+    razorpayOrderId: z.string().min(1),
+    razorpayPaymentId: z.string().min(1),
+    projectId: z.string().optional(),
+  }),
 } as const;
 
 export type EmailTemplate = keyof typeof EMAIL_TEMPLATES;
@@ -66,4 +88,6 @@ export const SUBJECTS: Record<EmailTemplate, string> = {
   "payment.receipt": "Payment receipt",
   "meeting.scheduled": "Your Athros call is scheduled",
   "lead.received": "We received your project brief",
+  "booking.confirmed": "Your Athros project booking is confirmed",
+  "booking.admin_notification": "New Athros Project Booking — Token Payment Received",
 };

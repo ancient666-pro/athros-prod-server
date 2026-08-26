@@ -95,7 +95,7 @@ function DashboardPage() {
           </h1>
           <p className="mt-2 text-[14px] text-muted-foreground">
             {project
-              ? project.summary ?? "Live status of your native build."
+              ? (project.summary ?? "Live status of your native build.")
               : "Your project workspace is being set up by our delivery team."}
           </p>
         </div>
@@ -163,7 +163,9 @@ function DashboardPage() {
                       </span>
                       <p className="text-[14.5px] font-medium">{milestone.title}</p>
                       {milestone.detail ? (
-                        <p className="mt-1 text-[13.5px] text-muted-foreground">{milestone.detail}</p>
+                        <p className="mt-1 text-[13.5px] text-muted-foreground">
+                          {milestone.detail}
+                        </p>
                       ) : null}
                       <p className="mt-1 font-mono text-[11px] tracking-wider text-muted-foreground uppercase">
                         {milestone.status.replace(/_/g, " ")}
@@ -255,7 +257,8 @@ function DashboardPage() {
                         </Button>
                       ) : (
                         <p className="mt-3 flex items-center gap-1.5 text-[13px] text-muted-foreground">
-                          <Lock className="h-3.5 w-3.5" /> Locked — released after milestone sign-off
+                          <Lock className="h-3.5 w-3.5" /> Locked — released after milestone
+                          sign-off
                         </p>
                       )}
                     </li>

@@ -7,27 +7,37 @@ export interface DeviceInfo {
 
 export function parseUserAgent(userAgent: string | null): DeviceInfo {
   const ua = userAgent ?? "";
-  const browser =
-    /Edg\//.test(ua) ? "Edge"
-    : /OPR\//.test(ua) ? "Opera"
-    : /Chrome\//.test(ua) ? "Chrome"
-    : /Safari\//.test(ua) && /Version\//.test(ua) ? "Safari"
-    : /Firefox\//.test(ua) ? "Firefox"
-    : ua ? "Other"
-    : "Unknown";
+  const browser = /Edg\//.test(ua)
+    ? "Edge"
+    : /OPR\//.test(ua)
+      ? "Opera"
+      : /Chrome\//.test(ua)
+        ? "Chrome"
+        : /Safari\//.test(ua) && /Version\//.test(ua)
+          ? "Safari"
+          : /Firefox\//.test(ua)
+            ? "Firefox"
+            : ua
+              ? "Other"
+              : "Unknown";
 
-  const os =
-    /Windows NT/.test(ua) ? "Windows"
-    : /Android/.test(ua) ? "Android"
-    : /(iPhone|iPad|iPod)/.test(ua) ? "iOS"
-    : /Mac OS X/.test(ua) ? "macOS"
-    : /Linux/.test(ua) ? "Linux"
-    : "Unknown";
+  const os = /Windows NT/.test(ua)
+    ? "Windows"
+    : /Android/.test(ua)
+      ? "Android"
+      : /(iPhone|iPad|iPod)/.test(ua)
+        ? "iOS"
+        : /Mac OS X/.test(ua)
+          ? "macOS"
+          : /Linux/.test(ua)
+            ? "Linux"
+            : "Unknown";
 
-  const device =
-    /iPad|Tablet/.test(ua) ? "Tablet"
-    : /Mobile|iPhone|Android/.test(ua) ? "Mobile"
-    : "Desktop";
+  const device = /iPad|Tablet/.test(ua)
+    ? "Tablet"
+    : /Mobile|iPhone|Android/.test(ua)
+      ? "Mobile"
+      : "Desktop";
 
   return { browser, os, device };
 }

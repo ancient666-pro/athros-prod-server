@@ -6,7 +6,11 @@ import { QUEUES, type EnqueueOptions, type Job, type QueueName } from "./queue";
  * is durable across isolates; a Redis driver can be installed with `setQueueDriver`.
  */
 export interface QueueDriver {
-  enqueue(queue: QueueName, payload: Record<string, unknown>, options?: EnqueueOptions): Promise<string>;
+  enqueue(
+    queue: QueueName,
+    payload: Record<string, unknown>,
+    options?: EnqueueOptions,
+  ): Promise<string>;
   claim(queue: QueueName, limit: number): Promise<Job[]>;
   complete(jobId: string): Promise<void>;
   fail(jobId: string, error: string, attempts: number, maxAttempts: number): Promise<void>;

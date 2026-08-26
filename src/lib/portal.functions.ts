@@ -24,7 +24,15 @@ export const getMyPortal = createServerFn({ method: "GET" })
     const isAdmin = (roles ?? []).some((row) => row.role === "admin");
 
     if (!project) {
-      return { profile, isAdmin, project: null, milestones: [], issues: [], payments: [], deliveries: [] };
+      return {
+        profile,
+        isAdmin,
+        project: null,
+        milestones: [],
+        issues: [],
+        payments: [],
+        deliveries: [],
+      };
     }
 
     const [{ data: milestones }, { data: issues }, { data: payments }, { data: deliveries }] =
@@ -92,15 +100,19 @@ export const getAdminOverview = createServerFn({ method: "GET" })
     const { data: isStaff } = await supabase.rpc("is_staff", { _user_id: userId });
     if (!isStaff) throw new Error("Forbidden");
 
-
-    const [{ data: clients }, { data: projects }, { data: deliveries }, { data: payments }, { data: issues }] =
-      await Promise.all([
-        supabase.from("profiles").select("*").order("created_at", { ascending: false }),
-        supabase.from("projects").select("*").order("created_at", { ascending: false }),
-        supabase.from("project_deliveries").select("*").order("created_at", { ascending: false }),
-        supabase.from("project_payments").select("*").order("due_date", { ascending: true }),
-        supabase.from("project_issues").select("*").order("created_at", { ascending: false }),
-      ]);
+    const [
+      { data: clients },
+      { data: projects },
+      { data: deliveries },
+      { data: payments },
+      { data: issues },
+    ] = await Promise.all([
+      supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+      supabase.from("projects").select("*").order("created_at", { ascending: false }),
+      supabase.from("project_deliveries").select("*").order("created_at", { ascending: false }),
+      supabase.from("project_payments").select("*").order("due_date", { ascending: true }),
+      supabase.from("project_issues").select("*").order("created_at", { ascending: false }),
+    ]);
 
     return {
       clients: clients ?? [],
@@ -149,7 +161,13 @@ export const upsertProject = createServerFn({ method: "POST" })
 export const setProjectProgress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) =>
-    z.object({ projectId: uuid, progress: z.number().int().min(0).max(100), status: z.string().trim().max(40).optional() }).parse(data),
+    z
+      .object({
+        projectId: uuid,
+        progress: z.number().int().min(0).max(100),
+        status: z.string().trim().max(40).optional(),
+      })
+      .parse(data),
   )
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
@@ -239,9 +257,7 @@ export const upsertDelivery = createServerFn({ method: "POST" })
 
 export const setDeliveryLock = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) =>
-    z.object({ id: uuid, unlocked: z.boolean() }).parse(data),
-  )
+  .inputValidator((data: unknown) => z.object({ id: uuid, unlocked: z.boolean() }).parse(data))
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase
       .from("project_deliveries")

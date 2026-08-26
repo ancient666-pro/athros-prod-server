@@ -12,8 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 
-
-
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
@@ -23,7 +21,10 @@ export const Route = createFileRoute("/_authenticated/admin")({
         content: "Athros internal portal: manage client projects, progress and build unlocks.",
       },
       { property: "og:title", content: "Admin Portal — Athros" },
-      { property: "og:description", content: "Manage client projects, progress and build unlocks." },
+      {
+        property: "og:description",
+        content: "Manage client projects, progress and build unlocks.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex" },
@@ -92,7 +93,8 @@ function AdminPage() {
         Delivery control
       </h1>
       <p className="mt-2 text-[14px] text-muted-foreground">
-        {data.clients.length} clients · {data.projects.length} projects · {data.deliveries.length} builds
+        {data.clients.length} clients · {data.projects.length} projects · {data.deliveries.length}{" "}
+        builds
       </p>
 
       <div className="mt-8">
@@ -100,8 +102,6 @@ function AdminPage() {
           onCreated={() => queryClient.invalidateQueries({ queryKey: ["admin-overview"] })}
         />
       </div>
-
-
 
       <section className="mt-8 grid gap-4">
         {data.projects.map((project) => {

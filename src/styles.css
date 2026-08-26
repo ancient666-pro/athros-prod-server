@@ -32,6 +32,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-nv: var(--nv);
+  --color-nv-foreground: var(--nv-foreground);
   --color-nv-bright: var(--nv-bright);
   --color-nv-soft: var(--nv-soft);
   --color-fire: var(--fire);
@@ -65,6 +66,7 @@
   --ring: oklch(0.72 0.2 130);
 
   --nv: oklch(0.7 0.196 130.5);
+  --nv-foreground: oklch(0.18 0.03 130);
   --nv-bright: oklch(0.87 0.24 128);
   --nv-soft: oklch(0.94 0.07 128);
   --fire: oklch(0.68 0.2 42);
@@ -73,10 +75,17 @@
 
   --glass-bg: oklch(1 0 0 / 62%);
   --glass-border: oklch(0.2 0.01 260 / 8%);
-  --shadow-elevated: 0 1px 2px oklch(0.2 0.01 260 / 6%), 0 12px 40px -12px oklch(0.2 0.01 260 / 14%);
+  --shadow-elevated:
+    0 1px 2px oklch(0.2 0.01 260 / 6%), 0 12px 40px -12px oklch(0.2 0.01 260 / 14%);
   --shadow-float: 0 30px 80px -30px oklch(0.2 0.01 260 / 26%);
   --gradient-nv: linear-gradient(135deg, var(--nv-bright), var(--nv));
-  --gradient-fire: linear-gradient(145deg, oklch(0.86 0.17 92), var(--fire-amber) 40%, var(--fire) 78%, oklch(0.6 0.21 30));
+  --gradient-fire: linear-gradient(
+    145deg,
+    oklch(0.86 0.17 92),
+    var(--fire-amber) 40%,
+    var(--fire) 78%,
+    oklch(0.6 0.21 30)
+  );
 }
 
 .dark {
@@ -244,6 +253,22 @@
 }
 
 @keyframes shimmer-x {
-  0% { transform: translateX(-100%); }
-  60%, 100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-150%);
+  }
+  60%,
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+@utility animate-shimmer {
+  animation: shimmer-x 2.6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-shimmer,
+  [class*="animation:shimmer-x"] {
+    animation: none !important;
+  }
 }

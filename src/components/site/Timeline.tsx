@@ -62,9 +62,7 @@ export function Timeline() {
                     <p
                       className={cn(
                         "overflow-hidden text-[13px] text-muted-foreground transition-all duration-500",
-                        active === index
-                          ? "mt-1.5 max-h-16 opacity-100"
-                          : "max-h-0 opacity-0",
+                        active === index ? "mt-1.5 max-h-16 opacity-100" : "max-h-0 opacity-0",
                       )}
                     >
                       {step.detail}

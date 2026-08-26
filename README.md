@@ -524,7 +524,7 @@ Include:
 
 Everything in MVP
 
-+
+-
 
 Unlimited Screens
 
@@ -983,7 +983,6 @@ FINAL GOAL
 =========================================================
 
 The finished website should feel like a premium combination of Apple, Vercel, NVIDIA, Linear, and Stripe, while remaining unique. Visitors should instantly understand that this company delivers AI-assisted native app development with exceptional speed and quality. Every animation must be purposeful, smooth, and performant, creating a polished, enterprise-grade experience rather than a flashy demo. The final result should be production-ready, fully responsive, SEO-optimized, accessible, and capable of converting founders into paying clients through strong visual hierarchy, compelling messaging, and strategically designed calls to action.
-
 
 RUN IN LOOP UNTIL THE GOAL IS ACHIEVED AND SELF REVIEW THE DESIRED UI, UX AND WORKFLOW
 

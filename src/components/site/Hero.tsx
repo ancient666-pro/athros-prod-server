@@ -1,9 +1,9 @@
 import { motion } from "motion/react";
 import { ArrowUpRight, Rocket } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { AICore } from "./AICore";
 import { MagneticButton, Reveal } from "./primitives";
-import { useLeadModal } from "./lead-modal-context";
 
 const rotating = ["Build.", "Launch.", "Scale.", "Powered by AI."];
 
@@ -41,11 +41,9 @@ function RotatingWord() {
 }
 
 export function Hero() {
-  const { openModal } = useLeadModal();
+  const navigate = useNavigate();
 
   return (
-
-
     <section id="home" className="noise relative overflow-hidden pt-32 pb-10 sm:pt-40">
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="grid-bg absolute inset-0 opacity-70" />
@@ -80,24 +78,31 @@ export function Hero() {
           <Reveal delay={0.24}>
             <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-muted-foreground sm:text-base">
               We transform your startup idea into production-ready native Android and iOS
-              applications. From MVP in 48 hours to enterprise-grade platforms delivered
-              within days — built by experienced engineers, not just AI.
+              applications. From MVP in 48 hours to enterprise-grade platforms delivered within days
+              — built by experienced engineers, not just AI.
             </p>
           </Reveal>
 
           <Reveal delay={0.32}>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <MagneticButton
-                href="#contact"
+                href="/booking?package=production_ready"
                 onClick={(event) => {
                   event.preventDefault();
-                  openModal();
+                  navigate({ to: "/booking", search: { package: "production_ready" } });
                 }}
               >
                 <Rocket className="h-4 w-4" />
                 Unleash Your Empire
               </MagneticButton>
-              <MagneticButton href="#contact" variant="ghost">
+              <MagneticButton
+                href="/booking?package=production_ready"
+                onClick={(event) => {
+                  event.preventDefault();
+                  navigate({ to: "/booking", search: { package: "production_ready" } });
+                }}
+                variant="ghost"
+              >
                 Book Strategy Call
                 <ArrowUpRight className="h-4 w-4" />
               </MagneticButton>
@@ -127,7 +132,7 @@ export function Hero() {
 
       <div className="marquee-mask mt-16 overflow-hidden border-y border-border/70 py-4">
         <div
-          className="flex w-max animate-marquee gap-3 hover:[animation-play-state:paused]"
+          className="flex w-max animate-marquee gap-3"
           style={{ "--marquee-duration": "48s" } as React.CSSProperties}
         >
           {[...badges, ...badges].map((badge, index) => (

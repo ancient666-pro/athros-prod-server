@@ -50,9 +50,7 @@ export const submitLead = createServerFn({ method: "POST" })
           body: JSON.stringify({ ...data, submittedAt: new Date().toISOString() }),
         });
         if (!response.ok) {
-          console.error(
-            `Sheets webhook failed [${response.status}]: ${await response.text()}`,
-          );
+          console.error(`Sheets webhook failed [${response.status}]: ${await response.text()}`);
         }
       } catch (sheetError) {
         console.error("Sheets webhook error", sheetError);

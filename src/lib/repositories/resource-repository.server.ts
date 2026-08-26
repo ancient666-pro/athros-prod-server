@@ -9,7 +9,11 @@ export type Row = Record<string, unknown>;
  * Minimal structural view of the PostgREST builder so tables can be addressed
  * dynamically without `any`. Runtime object is the real Supabase builder.
  */
-interface Query extends PromiseLike<{ data: Row[] | null; error: PgError | null; count: number | null }> {
+interface Query extends PromiseLike<{
+  data: Row[] | null;
+  error: PgError | null;
+  count: number | null;
+}> {
   select(columns: string, options?: { count: "exact"; head?: boolean }): Query;
   insert(values: Row): Query;
   update(values: Row): Query;
@@ -114,8 +118,7 @@ export class ResourceRepository {
         total: count,
         nextCursor:
           rows.length === query.limit && typeof cursorValue === "string" ? cursorValue : null,
-        hasMore:
-          count === null ? rows.length === query.limit : query.offset + rows.length < count,
+        hasMore: count === null ? rows.length === query.limit : query.offset + rows.length < count,
       },
     };
   }

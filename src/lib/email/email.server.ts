@@ -95,6 +95,36 @@ function render<T extends EmailTemplate>(
         data["meetingLink"] ? button(String(data["meetingLink"]), "Join the call") : ""
       }`;
       break;
+    case "booking.confirmed":
+      body = `<p>Hi ${data["customerName"] ?? "there"},</p>
+<p>Your project booking with Athros has been confirmed!</p>
+<p><strong>Booking Reference:</strong> ${data["bookingNumber"]}<br/>
+<strong>Package:</strong> ${data["package"]}<br/>
+<strong>Token Paid:</strong> ${data["currency"]} ${data["tokenAmount"]}<br/>
+<strong>Total Project Value:</strong> ${data["currency"]} ${data["fullAmount"]}</p>
+<p>Your project is now in the queue for discovery. Our team will reach out within 1 business day to schedule the kickoff call.</p>
+<p>You can track your project progress in the <a href="${data["dashboardUrl"] ?? "https://athros.dev/dashboard"}">client dashboard</a>.</p>
+<p>If you have any questions, reply to this email or contact us at <a href="mailto:support@athros.ai">support@athros.ai</a>.</p>`;
+      break;
+    case "booking.admin_notification":
+      body = `<p><strong>New Project Booking — Token Payment Received</strong></p>
+<p><strong>Booking Number:</strong> ${data["bookingNumber"]}<br/>
+<strong>Customer:</strong> ${data["customerName"]}<br/>
+<strong>Email:</strong> ${data["customerEmail"]}<br/>
+<strong>Phone:</strong> ${data["customerPhone"] ?? "Not provided"}<br/>
+<strong>Company:</strong> ${data["company"] ?? "Not provided"}<br/>
+<strong>Package:</strong> ${data["package"]}<br/>
+<strong>Region:</strong> ${data["region"]}<br/>
+<strong>Currency:</strong> ${data["currency"]}<br/>
+<strong>Total Project Price:</strong> ${data["currency"]} ${data["fullAmount"]}<br/>
+<strong>Token Amount:</strong> ${data["currency"]} ${data["tokenAmount"]}<br/>
+<strong>Payment Status:</strong> ${data["paymentStatus"]}<br/>
+<strong>Razorpay Order ID:</strong> ${data["razorpayOrderId"]}<br/>
+<strong>Razorpay Payment ID:</strong> ${data["razorpayPaymentId"]}<br/>
+<strong>Project ID:</strong> ${data["projectId"] ?? "Pending creation"}<br/>
+<strong>Timestamp:</strong> ${new Date().toISOString()}</p>
+<p>Please review the booking details and proceed with project qualification.</p>`;
+      break;
     default:
       body = `<p>Hi ${data["fullName"] ?? "there"}, thanks for reaching out — our team will reply within one business day.</p>`;
   }
@@ -156,7 +186,11 @@ export async function sendEmail<T extends EmailTemplate>(
     if (row) {
       await supabaseAdmin
         .from("email_messages")
-        .update({ status: "failed", last_error: message.slice(0, 1000), attempts: row.attempts + 1 })
+        .update({
+          status: "failed",
+          last_error: message.slice(0, 1000),
+          attempts: row.attempts + 1,
+        })
         .eq("id", row.id);
       await enqueue("email", { messageId: row.id }).catch(() => undefined);
     }

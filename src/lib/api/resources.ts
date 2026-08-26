@@ -308,6 +308,67 @@ export const RESOURCES: Record<string, ResourceConfig> = {
     searchable: ["title"],
     serverOwnedFields: ["user_id", "type", "title", "description", "link"],
   }),
+
+  bookings: resource({
+    name: "bookings",
+    table: "project_bookings",
+    select:
+      "id, booking_number, lead_id, project_id, user_id, package, region, currency, full_amount_cents, token_amount_cents, token_percentage, status, payment_status, razorpay_order_id, razorpay_payment_id, customer_name, customer_email, customer_phone, company_name, project_summary, estimated_requirements, preferred_contact_method, company_website, existing_app_url, reference_links, expires_at, paid_at, cancelled_at, created_at, updated_at",
+    orderColumn: "created_at",
+    permissions: { read: "bookings:read", write: "bookings:write" },
+    createSchema: z.object({
+      package: z.enum(["mvp", "production_ready", "enterprise"]),
+      region: z.string().trim().length(2),
+      currency: z.string().trim().length(3),
+      customer_name: z.string().trim().min(2).max(100),
+      customer_email: z.string().email().max(255),
+      customer_phone: z.string().trim().max(32).optional(),
+      company_name: z.string().trim().max(120).optional(),
+      project_summary: z.string().trim().max(2000).optional(),
+      estimated_requirements: z.string().trim().max(2000).optional(),
+      preferred_contact_method: z.string().trim().max(40).optional(),
+      company_website: z.string().url().max(300).optional(),
+      existing_app_url: z.string().url().max(300).optional(),
+      reference_links: z.array(z.string().url()).max(10).default([]),
+    }),
+    updateSchema: z.object({
+      status: z
+        .enum([
+          "draft",
+          "payment_pending",
+          "token_paid",
+          "under_review",
+          "approved",
+          "rejected",
+          "cancelled",
+          "expired",
+        ])
+        .optional(),
+      project_id: uuid.nullish(),
+    }),
+    sensitive: ["razorpay_order_id", "razorpay_payment_id"],
+    projectColumn: "project_id",
+    searchable: ["booking_number", "customer_name", "customer_email", "company_name"],
+    serverOwnedFields: [
+      "id",
+      "booking_number",
+      "lead_id",
+      "project_id",
+      "user_id",
+      "full_amount_cents",
+      "token_amount_cents",
+      "token_percentage",
+      "status",
+      "payment_status",
+      "razorpay_order_id",
+      "razorpay_payment_id",
+      "expires_at",
+      "paid_at",
+      "cancelled_at",
+      "created_at",
+      "updated_at",
+    ],
+  }),
 };
 
 export function getResource(name: string): ResourceConfig | null {

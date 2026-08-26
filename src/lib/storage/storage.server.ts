@@ -1,11 +1,6 @@
 import { badRequest, forbidden } from "@/lib/api/errors";
 import { logger } from "@/lib/observability/logger.server";
-import {
-  STORAGE_BUCKETS,
-  buildObjectPath,
-  type BucketName,
-  type UploadRequest,
-} from "./buckets";
+import { STORAGE_BUCKETS, buildObjectPath, type BucketName, type UploadRequest } from "./buckets";
 
 /**
  * Signed upload/download issuance for private buckets. Every call validates
@@ -20,7 +15,12 @@ export interface ScanResult {
 
 /** Virus-scan hook interface — swap in ClamAV/VirusTotal without touching call sites. */
 export interface VirusScanner {
-  scan(input: { bucket: BucketName; path: string; contentType: string; size: number }): Promise<ScanResult>;
+  scan(input: {
+    bucket: BucketName;
+    path: string;
+    contentType: string;
+    size: number;
+  }): Promise<ScanResult>;
 }
 
 class PassthroughScanner implements VirusScanner {
@@ -119,7 +119,13 @@ export async function createSignedDownload(
     path,
     expiresIn,
     optimize
-      ? { transform: { width: transform.width, quality: transform.quality ?? 78, resize: "contain" } }
+      ? {
+          transform: {
+            width: transform.width,
+            quality: transform.quality ?? 78,
+            resize: "contain",
+          },
+        }
       : undefined,
   );
   if (error || !data) throw badRequest(error?.message ?? "Could not create download URL");
@@ -162,7 +168,8 @@ export async function cleanupExpiredObjects(): Promise<{ removed: number }> {
         .map((file) => `${folder.name}/${file.name}`);
       if (stale.length === 0) continue;
       const { error } = await supabaseAdmin.storage.from(name).remove(stale);
-      if (error) log.warn("storage cleanup partial failure", { bucket: name, error: error.message });
+      if (error)
+        log.warn("storage cleanup partial failure", { bucket: name, error: error.message });
       else removed += stale.length;
     }
   }

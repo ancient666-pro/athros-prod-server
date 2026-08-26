@@ -46,13 +46,7 @@ export function evaluatePassword(password: string): PasswordStrength {
   const raw = Math.max(0, Math.min(4, variety + lengthBonus - failures.length));
   const score = raw as PasswordStrength["score"];
 
-  const labels: PasswordStrength["label"][] = [
-    "very weak",
-    "weak",
-    "fair",
-    "strong",
-    "excellent",
-  ];
+  const labels: PasswordStrength["label"][] = ["very weak", "weak", "fair", "strong", "excellent"];
 
   return {
     score,

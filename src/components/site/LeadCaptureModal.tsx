@@ -169,8 +169,8 @@ export function LeadCaptureModal() {
               Your empire is queued.
             </DialogTitle>
             <DialogDescription className="mt-2 text-[14px]">
-              A senior engineer will reach out with a scope, timeline and fixed price. Check
-              your inbox shortly.
+              A senior engineer will reach out with a scope, timeline and fixed price. Check your
+              inbox shortly.
             </DialogDescription>
           </div>
         ) : (
@@ -181,8 +181,8 @@ export function LeadCaptureModal() {
                 Unleash Your Empire
               </DialogTitle>
               <DialogDescription>
-                Tell us about the product. We reply with scope, timeline and a fixed price —
-                usually within a few hours.
+                Tell us about the product. We reply with scope, timeline and a fixed price — usually
+                within a few hours.
               </DialogDescription>
             </DialogHeader>
 
@@ -287,11 +287,7 @@ export function LeadCaptureModal() {
                 </div>
               </Field>
 
-              <Field
-                label="What are you building?"
-                htmlFor="lead-message"
-                error={errors.message}
-              >
+              <Field label="What are you building?" htmlFor="lead-message" error={errors.message}>
                 <Textarea
                   id="lead-message"
                   rows={4}

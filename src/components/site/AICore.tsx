@@ -43,7 +43,6 @@ const RINGS: Ring[] = [
   },
 ];
 
-
 const particles = Array.from({ length: 26 }, (_, index) => ({
   id: index,
   left: (index * 37) % 100,
@@ -92,7 +91,6 @@ export function AICore() {
       className="relative mx-auto aspect-square w-full max-w-[520px] scale-[0.62] sm:scale-[0.8] lg:scale-100"
     >
       {!mounted ? null : (
-
         <div className="absolute inset-0">
           <div className="absolute inset-[12%] rounded-full bg-[radial-gradient(circle_at_35%_30%,var(--nv-soft),transparent_65%)] blur-2xl" />
 
@@ -135,8 +133,7 @@ export function AICore() {
                 }}
               >
                 {ring.nodes.map((node, nodeIndex) => {
-                  const angle =
-                    (nodeIndex / ring.nodes.length) * Math.PI * 2 + ring.offset;
+                  const angle = (nodeIndex / ring.nodes.length) * Math.PI * 2 + ring.offset;
                   return (
                     <span
                       key={node}

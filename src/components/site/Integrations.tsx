@@ -42,11 +42,19 @@ const rowTwo = [
   "Jira",
 ];
 
-function Row({ items, duration, reverse }: { items: string[]; duration: string; reverse?: boolean }) {
+function Row({
+  items,
+  duration,
+  reverse,
+}: {
+  items: string[];
+  duration: string;
+  reverse?: boolean;
+}) {
   return (
-    <div className="marquee-mask group/row overflow-hidden">
+    <div className="marquee-mask overflow-hidden">
       <div
-        className="flex w-max animate-marquee gap-3 group-hover/row:[animation-play-state:paused]"
+        className="flex w-max animate-marquee gap-3"
         style={
           {
             "--marquee-duration": duration,

@@ -1,13 +1,4 @@
-import {
-  BadgeCheck,
-  Boxes,
-  Cpu,
-  Gauge,
-  LifeBuoy,
-  Rocket,
-  ShieldCheck,
-  Users,
-} from "lucide-react";
+import { BadgeCheck, Boxes, Cpu, Gauge, LifeBuoy, Rocket, ShieldCheck, Users } from "lucide-react";
 import { Reveal, SectionHeading } from "./primitives";
 
 const cards = [

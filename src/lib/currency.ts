@@ -14,7 +14,10 @@ type TierPricing = {
   worth?: string;
 };
 
-export const PRICING: Record<CurrencyCode, { label: string; tiers: [TierPricing, TierPricing, TierPricing] }> = {
+export const PRICING: Record<
+  CurrencyCode,
+  { label: string; tiers: [TierPricing, TierPricing, TierPricing] }
+> = {
   INR: {
     label: "INR ₹",
     tiers: [
@@ -89,15 +92,24 @@ const COUNTRY_CURRENCY: Record<string, CurrencyCode> = {
   PT: "EUR",
   FI: "EUR",
   GR: "EUR",
+  LU: "EUR",
+  CY: "EUR",
+  MT: "EUR",
+  SI: "EUR",
+  SK: "EUR",
+  EE: "EUR",
+  LV: "EUR",
+  LT: "EUR",
 };
 
 const TIMEZONE_CURRENCY: Array<[RegExp, CurrencyCode]> = [
-  [/^Asia\/(Kolkata|Calcutta)/, "INR"],
-  [/^Asia\/Singapore/, "SGD"],
-  [/^Asia\/(Dubai|Qatar|Riyadh|Kuwait|Bahrain|Muscat)/, "AED"],
+  [/^Asia\/(Kolkata|Calcutta|Colombo)/, "INR"],
+  [/^Asia\/(Singapore|Kuala_Lumpur)/, "SGD"],
+  [/^Asia\/(Dubai|Qatar|Riyadh|Kuwait|Bahrain|Muscat|Abu_Dhabi)/, "AED"],
   [/^Europe\/London/, "GBP"],
   [/^Europe\//, "EUR"],
   [/^America\//, "USD"],
+  [/^(Pacific|Atlantic)\//, "USD"],
 ];
 
 export function isCurrency(value: unknown): value is CurrencyCode {
@@ -120,9 +132,18 @@ export function detectClientCurrency(): CurrencyCode {
     /* ignore */
   }
 
-  const locale = typeof navigator !== "undefined" ? navigator.language : "";
-  const region = locale.split("-")[1];
-  return currencyForCountry(region) ?? "USD";
+  if (typeof navigator !== "undefined") {
+    const locales = navigator.languages?.length ? navigator.languages : [navigator.language];
+    for (const loc of locales) {
+      if (!loc) continue;
+      const parts = loc.split("-");
+      const region = parts.length > 1 ? parts[parts.length - 1] : parts[0];
+      const match = currencyForCountry(region);
+      if (match) return match;
+    }
+  }
+
+  return "USD";
 }
 
 export function readStoredCurrency(): CurrencyCode | null {
@@ -134,4 +155,31 @@ export function readStoredCurrency(): CurrencyCode | null {
 export function storeCurrency(code: CurrencyCode) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(STORAGE_KEY, code);
+}
+
+/** Format currency amount for display */
+export function formatCurrencyAmount(amountCents: number, currency: CurrencyCode): string {
+  const amount = amountCents / 100;
+  const isFractional = amount % 1 !== 0;
+  const numFormatted = amount.toLocaleString("en-US", {
+    minimumFractionDigits: isFractional ? 2 : 0,
+    maximumFractionDigits: 2,
+  });
+
+  switch (currency) {
+    case "INR":
+      return `₹${numFormatted}`;
+    case "USD":
+      return `$${numFormatted}`;
+    case "GBP":
+      return `£${numFormatted}`;
+    case "EUR":
+      return `€${numFormatted}`;
+    case "AED":
+      return `AED ${numFormatted}`;
+    case "SGD":
+      return `SGD ${numFormatted}`;
+    default:
+      return `${currency} ${numFormatted}`;
+  }
 }

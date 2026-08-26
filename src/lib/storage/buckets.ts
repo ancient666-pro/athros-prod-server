@@ -112,7 +112,11 @@ export const uploadRequestSchema = z.object({
     .max(180)
     .regex(/^[\w .()-]+$/, "File name may only contain letters, numbers, spaces, . _ - ( )"),
   contentType: z.string().trim().min(3).max(160),
-  size: z.number().int().min(1).max(1024 * 1024 * 1024),
+  size: z
+    .number()
+    .int()
+    .min(1)
+    .max(1024 * 1024 * 1024),
 });
 
 export type UploadRequest = z.infer<typeof uploadRequestSchema>;

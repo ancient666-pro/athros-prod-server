@@ -143,12 +143,11 @@ export function Pricing() {
 
         <Reveal delay={0.2} className="mt-8 text-center">
           <p className="text-[13px] text-muted-foreground">
-            Every plan includes source code ownership, documented architecture, project
-            dashboard access, deployment, GitHub handover and a 30-day warranty.
+            Every plan includes source code ownership, documented architecture, project dashboard
+            access, deployment, GitHub handover and a 30-day warranty.
           </p>
         </Reveal>
       </div>
     </section>
   );
 }
-

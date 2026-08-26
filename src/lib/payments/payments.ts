@@ -14,28 +14,27 @@ export const PAYMENT_STATUSES = [
   "refunded",
   "failed",
   "cancelled",
+  "payment_review_required",
 ] as const;
 
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number];
 
 const NEXT: Record<PaymentStatus, readonly PaymentStatus[]> = {
-  created: ["checkout_pending", "cancelled", "failed"],
-  checkout_pending: ["pending", "authorized", "failed", "cancelled"],
-  pending: ["authorized", "captured", "paid", "failed", "cancelled"],
-  authorized: ["captured", "failed", "cancelled"],
+  created: ["checkout_pending", "cancelled", "failed", "payment_review_required"],
+  checkout_pending: ["pending", "authorized", "failed", "cancelled", "payment_review_required"],
+  pending: ["authorized", "captured", "paid", "failed", "cancelled", "payment_review_required"],
+  authorized: ["captured", "failed", "cancelled", "payment_review_required"],
   captured: ["paid", "partially_refunded", "refunded"],
   paid: ["partially_refunded", "refunded"],
   partially_refunded: ["refunded"],
   refunded: [],
   failed: ["checkout_pending"],
   cancelled: [],
+  payment_review_required: ["paid", "captured", "failed", "cancelled"],
 };
 
 export const SETTLED_STATUSES: readonly PaymentStatus[] = ["captured", "paid"];
-export const TERMINAL_PAYMENT_STATUSES: readonly PaymentStatus[] = [
-  "refunded",
-  "cancelled",
-];
+export const TERMINAL_PAYMENT_STATUSES: readonly PaymentStatus[] = ["refunded", "cancelled"];
 
 export function isPaymentStatus(value: unknown): value is PaymentStatus {
   return typeof value === "string" && (PAYMENT_STATUSES as readonly string[]).includes(value);

@@ -58,10 +58,7 @@ function DashboardMock() {
   const inView = useInView(ref, { once: true, margin: "-15% 0px" });
 
   return (
-    <div
-      ref={ref}
-      className="glass-card relative overflow-hidden p-5 shadow-[var(--shadow-float)]"
-    >
+    <div ref={ref} className="glass-card relative overflow-hidden p-5 shadow-[var(--shadow-float)]">
       <div className="pointer-events-none absolute -top-24 -right-16 h-56 w-56 rounded-full bg-[radial-gradient(circle,var(--nv-soft),transparent_70%)] opacity-60 blur-3xl" />
 
       <div className="relative z-10 flex items-center justify-between gap-3 border-b border-border pb-4">
@@ -100,9 +97,7 @@ function DashboardMock() {
           <div key={module.name}>
             <div className="flex items-center justify-between text-[12px]">
               <span className="font-medium">{module.name}</span>
-              <span className="font-mono text-[11px] text-muted-foreground">
-                {module.value}%
-              </span>
+              <span className="font-mono text-[11px] text-muted-foreground">{module.value}%</span>
             </div>
             <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-secondary">
               <motion.div

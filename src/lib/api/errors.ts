@@ -41,5 +41,4 @@ export const unauthorized = (message = "Authentication required") =>
 export const forbidden = (message = "You do not have access to this resource") =>
   new ApiError("forbidden", message);
 export const notFound = (message = "Resource not found") => new ApiError("not_found", message);
-export const rateLimited = (message = "Too many requests") =>
-  new ApiError("rate_limited", message);
+export const rateLimited = (message = "Too many requests") => new ApiError("rate_limited", message);

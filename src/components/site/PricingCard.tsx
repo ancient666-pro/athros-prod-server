@@ -1,4 +1,5 @@
-import { Check, Flame } from "lucide-react";
+import { Check, Flame, ArrowRight } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { MagneticButton, Reveal } from "./primitives";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +15,6 @@ export type PricingTier = {
   features: string[];
   featured?: boolean;
 };
-
 
 function FeatureList({ items, tone }: { items: string[]; tone: "nv" | "fire" }) {
   return (
@@ -35,12 +35,28 @@ function FeatureList({ items, tone }: { items: string[]; tone: "nv" | "fire" }) 
   );
 }
 
+function getPackageKey(name: string): "mvp" | "production_ready" | "enterprise" {
+  if (name.toLowerCase().includes("mvp")) return "mvp";
+  if (name.toLowerCase().includes("enterprise")) return "enterprise";
+  return "production_ready";
+}
+
 export function PricingCard({ tier, delay = 0 }: { tier: PricingTier; delay?: number }) {
   const tone = tier.featured ? "fire" : "nv";
+  const navigate = useNavigate();
+  const packageKey = getPackageKey(tier.name);
+
+  const handleClick = () => {
+    navigate({ to: "/booking", search: { package: packageKey } });
+  };
 
   return (
     <Reveal delay={delay} y={tier.featured ? 44 : 26} className="h-full">
-      <article className={cn("relative h-full", tier.featured && "lg:scale-[1.03]")}>
+      <article
+        className={cn("relative h-full", tier.featured && "lg:scale-[1.03]")}
+        onClick={handleClick}
+        style={{ cursor: "pointer" }}
+      >
         {tier.featured ? (
           <>
             <div className="absolute -inset-[1.5px] rounded-[calc(var(--radius)+14px)] fire-surface opacity-90 blur-[1px]" />
@@ -70,7 +86,7 @@ export function PricingCard({ tier, delay = 0 }: { tier: PricingTier; delay?: nu
                 <span className="relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-[oklch(0.2_0.03_40)] px-3 py-1 text-[10.5px] font-semibold tracking-wide text-[oklch(0.95_0.1_85)]">
                   <Flame className="h-3 w-3" />
                   MOST POPULAR
-                  <span className="pointer-events-none absolute inset-0 -translate-x-full bg-[linear-gradient(100deg,transparent,oklch(1_0_0/35%),transparent)] [animation:shimmer-x_2.6s_ease-in-out_infinite]" />
+                  <span className="pointer-events-none absolute inset-y-0 w-full bg-[linear-gradient(100deg,transparent_0%,oklch(1_0_0/45%)_50%,transparent_100%)] animate-shimmer" />
                 </span>
               ) : null}
             </div>
@@ -88,7 +104,6 @@ export function PricingCard({ tier, delay = 0 }: { tier: PricingTier; delay?: nu
             ) : null}
 
             <p
-
               className={cn(
                 "font-display mt-3 text-4xl font-semibold",
                 tier.featured && "text-[oklch(0.18_0.03_40)]",
@@ -107,9 +122,7 @@ export function PricingCard({ tier, delay = 0 }: { tier: PricingTier; delay?: nu
               ) : null}
             </p>
 
-            {tier.blurb ? (
-              <p className="mt-2 text-[13.5px] font-semibold">{tier.blurb}</p>
-            ) : null}
+            {tier.blurb ? <p className="mt-2 text-[13.5px] font-semibold">{tier.blurb}</p> : null}
 
             <p
               className={cn(
@@ -121,7 +134,12 @@ export function PricingCard({ tier, delay = 0 }: { tier: PricingTier; delay?: nu
             </p>
 
             <MagneticButton
-              href="#contact"
+              href={`/booking?package=${packageKey}`}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate({ to: "/booking", search: { package: packageKey } });
+              }}
               variant={tier.featured ? "primary" : "ghost"}
               className={cn(
                 "mt-6 w-full",
@@ -129,6 +147,7 @@ export function PricingCard({ tier, delay = 0 }: { tier: PricingTier; delay?: nu
               )}
             >
               {tier.cta}
+              <ArrowRight className="ml-2 h-3.5 w-3.5" />
             </MagneticButton>
 
             <FeatureList items={tier.features} tone={tone} />

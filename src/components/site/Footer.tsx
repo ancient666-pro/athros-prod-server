@@ -29,8 +29,8 @@ export function Footer() {
               <span className="font-display text-[15px] font-semibold">Athros</span>
             </div>
             <p className="mt-4 max-w-xs text-[13.5px] leading-relaxed text-muted-foreground">
-              AI-native app development studio building production-ready Android and iOS
-              products for founders who move fast.
+              AI-native app development studio building production-ready Android and iOS products
+              for founders who move fast.
             </p>
             <div className="mt-5 flex gap-2">
               {socials.map((social) => (
@@ -89,10 +89,7 @@ export function Footer() {
             <p className="mt-4 text-[13.5px] text-muted-foreground">
               Engineering notes on shipping native apps fast. Once a month.
             </p>
-            <form
-              className="mt-4 flex gap-2"
-              onSubmit={(event) => event.preventDefault()}
-            >
+            <form className="mt-4 flex gap-2" onSubmit={(event) => event.preventDefault()}>
               <label className="sr-only" htmlFor="newsletter-email">
                 Email address
               </label>

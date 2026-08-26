@@ -1,11 +1,5 @@
 import { motion, useInView, useReducedMotion } from "motion/react";
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ComponentPropsWithoutRef,
-  type ReactNode,
-} from "react";
+import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 type LenisLike = {
@@ -113,9 +107,7 @@ export function Reveal({
       className={className}
       initial={{ opacity: 0, y, filter: "blur(10px)" }}
       animate={
-        inView
-          ? { opacity: 1, y: 0, filter: "blur(0px)" }
-          : { opacity: 0, y, filter: "blur(10px)" }
+        inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : { opacity: 0, y, filter: "blur(10px)" }
       }
       transition={{ duration: 0.85, delay, ease: [0.16, 1, 0.3, 1] }}
     >
@@ -137,10 +129,7 @@ export function SectionHeading({
 }) {
   return (
     <Reveal
-      className={cn(
-        "mx-auto max-w-2xl",
-        align === "center" ? "text-center" : "mx-0 text-left",
-      )}
+      className={cn("mx-auto max-w-2xl", align === "center" ? "text-center" : "mx-0 text-left")}
     >
       <span className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-3 py-1 font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase">
         <span className="h-1.5 w-1.5 rounded-full bg-nv" />

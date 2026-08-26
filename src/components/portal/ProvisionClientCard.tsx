@@ -20,8 +20,7 @@ export function ProvisionClientCard({ onCreated }: { onCreated?: () => void }) {
   );
 
   const mutation = useMutation({
-    mutationFn: () =>
-      provision({ data: { email, fullName, company, projectName } }),
+    mutationFn: () => provision({ data: { email, fullName, company, projectName } }),
     onSuccess: (result) => {
       setCredentials({ email: result.email, tempPassword: result.tempPassword });
       setEmail("");

@@ -24,8 +24,8 @@ export function registerWebhookHandler(provider: string, handler: WebhookHandler
 }
 
 /** Timing-safe hex/base64 string comparison. */
-export function safeEqual(a: string, b: string): boolean {
-  if (a.length !== b.length) return false;
+export function safeEqual(a: string | null | undefined, b: string | null | undefined): boolean {
+  if (typeof a !== "string" || typeof b !== "string" || a.length !== b.length) return false;
   let diff = 0;
   for (let i = 0; i < a.length; i += 1) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
   return diff === 0;
@@ -53,7 +53,9 @@ export interface IngestInput {
 }
 
 /** Stores + processes a verified delivery. Returns the response status to reply with. */
-export async function ingestWebhook(input: IngestInput): Promise<{ status: number; body: unknown }> {
+export async function ingestWebhook(
+  input: IngestInput,
+): Promise<{ status: number; body: unknown }> {
   const log = logger.channel("webhook");
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
@@ -119,14 +121,21 @@ export async function ingestWebhook(input: IngestInput): Promise<{ status: numbe
     }
     return result.ok
       ? { status: 200, body: { ok: true } }
-      : { status: 422, body: { error: { code: "unprocessable", message: result.reason ?? "Rejected" } } };
+      : {
+          status: 422,
+          body: { error: { code: "unprocessable", message: result.reason ?? "Rejected" } },
+        };
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     log.error("webhook handler threw", error, { provider: input.provider });
     if (row) {
       await supabaseAdmin
         .from("webhook_events")
-        .update({ status: "failed", last_error: message.slice(0, 1000), attempts: row.attempts + 1 })
+        .update({
+          status: "failed",
+          last_error: message.slice(0, 1000),
+          attempts: row.attempts + 1,
+        })
         .eq("id", row.id);
       const { enqueue } = await import("@/lib/queue/queue.server");
       await enqueue("webhook-retry", { webhookEventId: row.id }).catch(() => undefined);

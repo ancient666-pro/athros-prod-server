@@ -12,13 +12,18 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as BookingRouteImport } from './routes/booking'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AdminLoginRouteImport } from './routes/admin/login'
+import { Route as AuthenticatedAdminBookingsRouteImport } from './routes/_authenticated/admin/bookings'
+import { Route as ApiPublicHealthRouteImport } from './routes/api/public/health'
 import { Route as ApiV1ResourceRouteImport } from './routes/api/v1/$resource'
+import { Route as ApiWorkerTickRouteImport } from './routes/api/worker/tick'
 import { Route as ApiV1ResourceIdRouteImport } from './routes/api/v1/$resource.$id'
+import { Route as ApiV1WebhooksRazorpayRouteImport } from './routes/api/v1/webhooks/razorpay'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -32,6 +37,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookingRoute = BookingRouteImport.update({
+  id: '/booking',
+  path: '/booking',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -59,9 +69,25 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminBookingsRoute =
+  AuthenticatedAdminBookingsRouteImport.update({
+    id: '/bookings',
+    path: '/bookings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const ApiPublicHealthRoute = ApiPublicHealthRouteImport.update({
+  id: '/api/public/health',
+  path: '/api/public/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiV1ResourceRoute = ApiV1ResourceRouteImport.update({
   id: '/api/v1/$resource',
   path: '/api/v1/$resource',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiWorkerTickRoute = ApiWorkerTickRouteImport.update({
+  id: '/api/worker/tick',
+  path: '/api/worker/tick',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiV1ResourceIdRoute = ApiV1ResourceIdRouteImport.update({
@@ -69,87 +95,126 @@ const ApiV1ResourceIdRoute = ApiV1ResourceIdRouteImport.update({
   path: '/$id',
   getParentRoute: () => ApiV1ResourceRoute,
 } as any)
+const ApiV1WebhooksRazorpayRoute = ApiV1WebhooksRazorpayRouteImport.update({
+  id: '/api/v1/webhooks/razorpay',
+  path: '/api/v1/webhooks/razorpay',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/booking': typeof BookingRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/v1/$resource': typeof ApiV1ResourceRouteWithChildren
+  '/api/worker/tick': typeof ApiWorkerTickRoute
   '/api/v1/$resource/$id': typeof ApiV1ResourceIdRoute
+  '/api/v1/webhooks/razorpay': typeof ApiV1WebhooksRazorpayRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/booking': typeof BookingRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/admin': typeof AuthenticatedAdminRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/bookings': typeof AuthenticatedAdminBookingsRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/v1/$resource': typeof ApiV1ResourceRouteWithChildren
+  '/api/worker/tick': typeof ApiWorkerTickRoute
   '/api/v1/$resource/$id': typeof ApiV1ResourceIdRoute
+  '/api/v1/webhooks/razorpay': typeof ApiV1WebhooksRazorpayRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/booking': typeof BookingRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
-  '/_authenticated/admin': typeof AuthenticatedAdminRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/admin/login': typeof AdminLoginRoute
+  '/_authenticated/admin/bookings': typeof AuthenticatedAdminBookingsRoute
+  '/api/public/health': typeof ApiPublicHealthRoute
   '/api/v1/$resource': typeof ApiV1ResourceRouteWithChildren
+  '/api/worker/tick': typeof ApiWorkerTickRoute
   '/api/v1/$resource/$id': typeof ApiV1ResourceIdRoute
+  '/api/v1/webhooks/razorpay': typeof ApiV1WebhooksRazorpayRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
+    | '/booking'
     | '/login'
     | '/reset-password'
     | '/admin'
     | '/dashboard'
     | '/admin/login'
+    | '/admin/bookings'
+    | '/api/public/health'
     | '/api/v1/$resource'
+    | '/api/worker/tick'
     | '/api/v1/$resource/$id'
+    | '/api/v1/webhooks/razorpay'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
+    | '/booking'
     | '/login'
     | '/reset-password'
     | '/admin'
     | '/dashboard'
     | '/admin/login'
+    | '/admin/bookings'
+    | '/api/public/health'
     | '/api/v1/$resource'
+    | '/api/worker/tick'
     | '/api/v1/$resource/$id'
+    | '/api/v1/webhooks/razorpay'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/booking'
     | '/login'
     | '/reset-password'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/admin/login'
+    | '/_authenticated/admin/bookings'
+    | '/api/public/health'
     | '/api/v1/$resource'
+    | '/api/worker/tick'
     | '/api/v1/$resource/$id'
+    | '/api/v1/webhooks/razorpay'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  BookingRoute: typeof BookingRoute
   LoginRoute: typeof LoginRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  ApiPublicHealthRoute: typeof ApiPublicHealthRoute
   ApiV1ResourceRoute: typeof ApiV1ResourceRouteWithChildren
+  ApiWorkerTickRoute: typeof ApiWorkerTickRoute
+  ApiV1WebhooksRazorpayRoute: typeof ApiV1WebhooksRazorpayRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -173,6 +238,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/booking': {
+      id: '/booking'
+      path: '/booking'
+      fullPath: '/booking'
+      preLoaderRoute: typeof BookingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -210,11 +282,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/bookings': {
+      id: '/_authenticated/admin/bookings'
+      path: '/bookings'
+      fullPath: '/admin/bookings'
+      preLoaderRoute: typeof AuthenticatedAdminBookingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/public/health': {
+      id: '/api/public/health'
+      path: '/api/public/health'
+      fullPath: '/api/public/health'
+      preLoaderRoute: typeof ApiPublicHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/$resource': {
       id: '/api/v1/$resource'
       path: '/api/v1/$resource'
       fullPath: '/api/v1/$resource'
       preLoaderRoute: typeof ApiV1ResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/worker/tick': {
+      id: '/api/worker/tick'
+      path: '/api/worker/tick'
+      fullPath: '/api/worker/tick'
+      preLoaderRoute: typeof ApiWorkerTickRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/v1/$resource/$id': {
@@ -224,16 +317,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiV1ResourceIdRouteImport
       parentRoute: typeof ApiV1ResourceRoute
     }
+    '/api/v1/webhooks/razorpay': {
+      id: '/api/v1/webhooks/razorpay'
+      path: '/api/v1/webhooks/razorpay'
+      fullPath: '/api/v1/webhooks/razorpay'
+      preLoaderRoute: typeof ApiV1WebhooksRazorpayRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminBookingsRoute: typeof AuthenticatedAdminBookingsRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminBookingsRoute: AuthenticatedAdminBookingsRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
 }
 
@@ -256,10 +367,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  BookingRoute: BookingRoute,
   LoginRoute: LoginRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   AdminLoginRoute: AdminLoginRoute,
+  ApiPublicHealthRoute: ApiPublicHealthRoute,
   ApiV1ResourceRoute: ApiV1ResourceRouteWithChildren,
+  ApiWorkerTickRoute: ApiWorkerTickRoute,
+  ApiV1WebhooksRazorpayRoute: ApiV1WebhooksRazorpayRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
