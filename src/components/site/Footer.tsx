@@ -23,9 +23,11 @@ export function Footer() {
         <div className="grid gap-10 md:grid-cols-[1.4fr_0.8fr_1fr_1.2fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="grid h-8 w-8 place-items-center rounded-xl bg-primary">
-                <span className="h-3 w-3 rounded-[4px] bg-gradient-nv" />
-              </span>
+              <img
+                src="/logo.png"
+                alt="Athros Logo"
+                className="h-8 w-8 object-contain dark:invert"
+              />
               <span className="font-display text-[15px] font-semibold">Athros</span>
             </div>
             <p className="mt-4 max-w-xs text-[13.5px] leading-relaxed text-muted-foreground">

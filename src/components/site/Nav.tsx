@@ -50,9 +50,7 @@ export function Nav() {
           }}
           className="flex min-w-0 items-center gap-2.5"
         >
-          <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-primary">
-            <span className="h-3 w-3 rounded-[4px] bg-gradient-nv" />
-          </span>
+          <img src="/logo.png" alt="Athros Logo" className="h-8 w-8 object-contain dark:invert" />
           <span className="font-display truncate text-[15px] font-semibold tracking-tight">
             Athros
           </span>
