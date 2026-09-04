@@ -292,3 +292,56 @@ describe("Prompt Verification Examples & Token Calculation Rules", () => {
     expect(result.estimatedTimeline.additionalDaysText).toBe("+8–11 days");
   });
 });
+
+describe("Services Snapshot Structure (booking persistence contract)", () => {
+  it("aggregate items carry all fields required for the selected_services DB snapshot", () => {
+    const result = calculateAggregateProjectPricing(
+      [
+        { serviceId: "app", planId: "production_ready" },
+        { serviceId: "web", planId: "business" },
+      ],
+      "INR",
+    );
+
+    expect(result.items.length).toBe(2);
+
+    const appItem = result.items.find((i) => i.serviceId === "app");
+    expect(appItem).toBeDefined();
+    // Fields required by the BookingServiceSnapshot interface
+    expect(typeof appItem!.serviceId).toBe("string");
+    expect(typeof appItem!.serviceLabel).toBe("string");
+    expect(typeof appItem!.planId).toBe("string");
+    expect(typeof appItem!.planName).toBe("string");
+    expect(typeof appItem!.amountCents).toBe("number");
+    expect(typeof appItem!.deliveryDuration).toBe("string");
+    expect(typeof appItem!.isRecurring).toBe("boolean");
+    expect(appItem!.isRecurring).toBe(false);
+
+    // Verify numeric correctness
+    expect(appItem!.amountCents).toBe(19999900);
+  });
+
+  it("empty selected_services array produces empty snapshot (single-package booking path)", () => {
+    // When no selected_services are passed, the aggregate is NOT called server-side —
+    // the AUTHORITATIVE_PRICING path is used instead, and servicesSnapshot stays [].
+    // Verify the aggregate engine handles an empty array gracefully.
+    const result = calculateAggregateProjectPricing([], "INR");
+    expect(result.items.length).toBe(0);
+    expect(result.oneTimeTotalAmountCents).toBe(0);
+    expect(result.tokenAmountCents).toBe(0);
+    expect(result.hasRecurringPlan).toBe(false);
+    expect(result.maintenanceMonthlyCents).toBe(0);
+  });
+
+  it("maintenance service snapshot item is marked isRecurring=true and carries allocationHours", () => {
+    const result = calculateAggregateProjectPricing(
+      [{ serviceId: "maintenance", planId: "growth" }],
+      "INR",
+    );
+    const maintenanceItem = result.items.find((i) => i.serviceId === "maintenance");
+    expect(maintenanceItem).toBeDefined();
+    expect(maintenanceItem!.isRecurring).toBe(true);
+    // allocationHours may be a string or null but must exist as a key in the item
+    expect("allocationHours" in maintenanceItem!).toBe(true);
+  });
+});

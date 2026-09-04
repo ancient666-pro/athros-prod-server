@@ -4,6 +4,20 @@ import { z } from "zod";
 
 const uuid = z.string().uuid();
 
+export interface BookingServiceSnapshot {
+  serviceId: string;
+  serviceLabel: string;
+  planId: string;
+  planName: string;
+  currency: string;
+  unitPriceCents: number;
+  quantity: number;
+  subtotalCents: number;
+  deliveryDuration: string;
+  isRecurring: boolean;
+  allocationHours: string | null;
+}
+
 export interface AdminBooking {
   id: string;
   booking_number: string;
@@ -30,6 +44,8 @@ export interface AdminBooking {
   company_website: string | null;
   existing_app_url: string | null;
   reference_links: string[];
+  /** Immutable snapshot of selected modular services at booking time. Empty array for single-package bookings. */
+  selected_services: BookingServiceSnapshot[];
   expires_at: string | null;
   paid_at: string | null;
   cancelled_at: string | null;

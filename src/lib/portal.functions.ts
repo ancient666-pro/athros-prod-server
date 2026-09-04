@@ -28,6 +28,7 @@ export const getMyPortal = createServerFn({ method: "GET" })
         profile,
         isAdmin,
         project: null,
+        booking: null,
         milestones: [],
         issues: [],
         payments: [],
@@ -35,34 +36,49 @@ export const getMyPortal = createServerFn({ method: "GET" })
       };
     }
 
-    const [{ data: milestones }, { data: issues }, { data: payments }, { data: deliveries }] =
-      await Promise.all([
-        supabase
-          .from("project_milestones")
-          .select("*")
-          .eq("project_id", project.id)
-          .order("position", { ascending: true }),
-        supabase
-          .from("project_issues")
-          .select("*")
-          .eq("project_id", project.id)
-          .order("created_at", { ascending: false }),
-        supabase
-          .from("project_payments")
-          .select("*")
-          .eq("project_id", project.id)
-          .order("due_date", { ascending: true }),
-        supabase
-          .from("project_deliveries")
-          .select("*")
-          .eq("project_id", project.id)
-          .order("created_at", { ascending: false }),
-      ]);
+    const [
+      { data: milestones },
+      { data: issues },
+      { data: payments },
+      { data: deliveries },
+      { data: booking },
+    ] = await Promise.all([
+      supabase
+        .from("project_milestones")
+        .select("*")
+        .eq("project_id", project.id)
+        .order("position", { ascending: true }),
+      supabase
+        .from("project_issues")
+        .select("*")
+        .eq("project_id", project.id)
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("project_payments")
+        .select("*")
+        .eq("project_id", project.id)
+        .order("due_date", { ascending: true }),
+      supabase
+        .from("project_deliveries")
+        .select("*")
+        .eq("project_id", project.id)
+        .order("created_at", { ascending: false }),
+      // Fetch the booking snapshot linked to this project (read-only for the client).
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any)
+        .from("project_bookings")
+        .select(
+          "id, booking_number, package, currency, full_amount_cents, token_amount_cents, token_percentage, selected_services, status, payment_status",
+        )
+        .eq("project_id", project.id)
+        .maybeSingle(),
+    ]);
 
     return {
       profile,
       isAdmin,
       project,
+      booking: booking ?? null,
       milestones: milestones ?? [],
       issues: issues ?? [],
       payments: payments ?? [],

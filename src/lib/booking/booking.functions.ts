@@ -87,6 +87,23 @@ export const createBooking = createServerFn({ method: "POST" })
     let tokenAmountCents = 0;
     const tokenPercentage = DEFAULT_TOKEN_PERCENTAGE; // 15%
 
+    // Build an immutable snapshot of the selected services for persistence.
+    // This snapshot is derived exclusively from server-authoritative catalog data
+    // so that future catalog price changes do not affect historical bookings.
+    let servicesSnapshot: Array<{
+      serviceId: string;
+      serviceLabel: string;
+      planId: string;
+      planName: string;
+      currency: string;
+      unitPriceCents: number;
+      quantity: number;
+      subtotalCents: number;
+      deliveryDuration: string;
+      isRecurring: boolean;
+      allocationHours: string | null;
+    }> = [];
+
     if (data.selected_services && data.selected_services.length > 0) {
       const { calculateAggregateProjectPricing } = await import("@/lib/pricing-services");
       const aggregate = calculateAggregateProjectPricing(
@@ -95,6 +112,21 @@ export const createBooking = createServerFn({ method: "POST" })
       );
       fullAmountCents = aggregate.totalAmountCents;
       tokenAmountCents = aggregate.tokenAmountCents;
+
+      // Build the snapshot from the authoritative aggregate items
+      servicesSnapshot = aggregate.items.map((item) => ({
+        serviceId: item.serviceId,
+        serviceLabel: item.serviceLabel,
+        planId: item.planId,
+        planName: item.planName,
+        currency: data.currency.toUpperCase(),
+        unitPriceCents: item.amountCents,
+        quantity: 1,
+        subtotalCents: item.amountCents,
+        deliveryDuration: item.deliveryDuration,
+        isRecurring: item.isRecurring,
+        allocationHours: item.allocationHours ?? null,
+      }));
     } else {
       const pricing = await getPricingForBooking(data.package, data.currency);
       if (!pricing) {
@@ -147,31 +179,38 @@ export const createBooking = createServerFn({ method: "POST" })
     // Create booking record
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const insertPayload: any = {
+      booking_number: bookingNumber,
+      lead_id: leadId,
+      package: data.package,
+      region: data.region,
+      currency: data.currency,
+      full_amount_cents: fullAmountCents,
+      token_amount_cents: tokenAmountCents,
+      token_percentage: tokenPercentage,
+      status: "payment_pending",
+      payment_status: "checkout_pending",
+      customer_name: data.customer_name,
+      customer_email: data.customer_email.toLowerCase(),
+      customer_phone: data.customer_phone,
+      company_name: data.company_name,
+      project_summary: data.project_summary,
+      estimated_requirements: data.estimated_requirements,
+      preferred_contact_method: data.preferred_contact_method,
+      company_website: data.company_website,
+      existing_app_url: data.existing_app_url,
+      reference_links: data.reference_links,
+      // selected_services: immutable snapshot of booked services.
+      // Column added via migration 20260904110000_booking_services_snapshot.sql.
+      // Cast required because Supabase type generator runs before migrations are applied.
+      selected_services: servicesSnapshot,
+      expires_at: expiresAt.toISOString(),
+    };
+
     const { data: booking, error: bookingError } = await supabaseAdmin
       .from("project_bookings")
-      .insert({
-        booking_number: bookingNumber,
-        lead_id: leadId,
-        package: data.package,
-        region: data.region,
-        currency: data.currency,
-        full_amount_cents: fullAmountCents,
-        token_amount_cents: tokenAmountCents,
-        token_percentage: tokenPercentage,
-        status: "payment_pending",
-        payment_status: "checkout_pending",
-        customer_name: data.customer_name,
-        customer_email: data.customer_email.toLowerCase(),
-        customer_phone: data.customer_phone,
-        company_name: data.company_name,
-        project_summary: data.project_summary,
-        estimated_requirements: data.estimated_requirements,
-        preferred_contact_method: data.preferred_contact_method,
-        company_website: data.company_website,
-        existing_app_url: data.existing_app_url,
-        reference_links: data.reference_links,
-        expires_at: expiresAt.toISOString(),
-      })
+      .insert(insertPayload)
       .select("id")
       .single();
 

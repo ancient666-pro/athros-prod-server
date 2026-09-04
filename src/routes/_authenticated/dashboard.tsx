@@ -82,7 +82,7 @@ function DashboardPage() {
     );
   }
 
-  const { project, milestones, issues, payments, deliveries, profile, isAdmin } = data;
+  const { project, milestones, issues, payments, deliveries, profile, isAdmin, booking } = data;
   const openIssues = issues.filter((issue) => issue.status !== "resolved").length;
   const paid = payments.filter((payment) => payment.status === "paid").length;
 
@@ -144,6 +144,107 @@ function DashboardPage() {
             <StatCard label="Open issues" value={String(openIssues)} />
             <StatCard label="Payments settled" value={`${paid}/${payments.length}`} />
           </div>
+
+          {/* Project Services — read-only snapshot of what was booked */}
+          {booking && (
+            <div className="mt-6 glass rounded-3xl border border-border p-6">
+              <p className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground uppercase">
+                Project Services
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <Badge className="rounded-full capitalize">
+                  {(booking.package as string).replace(/_/g, " ")}
+                </Badge>
+                <span className="text-xs text-muted-foreground">{booking.currency}</span>
+              </div>
+
+              {Array.isArray(booking.selected_services) &&
+                (
+                  booking.selected_services as Array<{
+                    serviceId: string;
+                    serviceLabel: string;
+                    planId: string;
+                    planName: string;
+                    currency: string;
+                    subtotalCents: number;
+                    isRecurring: boolean;
+                    deliveryDuration: string;
+                    allocationHours?: string | null;
+                  }>
+                ).length > 0 && (
+                  <ul className="mt-4 space-y-2">
+                    {(
+                      booking.selected_services as Array<{
+                        serviceId: string;
+                        serviceLabel: string;
+                        planId: string;
+                        planName: string;
+                        currency: string;
+                        subtotalCents: number;
+                        isRecurring: boolean;
+                        deliveryDuration: string;
+                        allocationHours?: string | null;
+                      }>
+                    ).map((svc, i) => (
+                      <li
+                        key={`${svc.serviceId}-${svc.planId}-${i}`}
+                        className="flex items-center justify-between rounded-xl border border-border px-4 py-2"
+                      >
+                        <div>
+                          <p className="text-sm font-medium">{svc.serviceLabel}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {svc.planName}
+                            {svc.isRecurring
+                              ? ` · ${svc.allocationHours ?? "Monthly"}`
+                              : ` · ${svc.deliveryDuration}`}
+                          </p>
+                        </div>
+                        <span className="font-mono text-sm">
+                          {svc.subtotalCents > 0
+                            ? `${svc.currency} ${(svc.subtotalCents / 100).toLocaleString()}`
+                            : "Custom quote"}
+                          {svc.isRecurring ? "/mo" : ""}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+              <div className="mt-4 grid grid-cols-3 gap-3">
+                <div className="rounded-xl border border-border p-3 text-center">
+                  <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Total
+                  </p>
+                  <p className="mt-1 font-mono text-base font-semibold">
+                    {booking.currency}{" "}
+                    {((booking.full_amount_cents as number) / 100).toLocaleString()}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-nv/40 bg-nv/10 p-3 text-center">
+                  <p className="font-mono text-[10px] uppercase tracking-wider text-nv font-semibold">
+                    Token ({booking.token_percentage}%)
+                  </p>
+                  <p className="mt-1 font-mono text-base font-bold">
+                    {booking.currency}{" "}
+                    {((booking.token_amount_cents as number) / 100).toLocaleString()}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-border p-3 text-center">
+                  <p className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
+                    Balance
+                  </p>
+                  <p className="mt-1 font-mono text-base font-semibold">
+                    {booking.currency}{" "}
+                    {(
+                      ((booking.full_amount_cents as number) -
+                        (booking.token_amount_cents as number)) /
+                      100
+                    ).toLocaleString()}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           <Tabs defaultValue="timeline" className="mt-10">
             <TabsList className="flex-wrap">
