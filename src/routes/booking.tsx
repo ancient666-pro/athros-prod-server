@@ -11,12 +11,15 @@ const bookingSearchSchema = z.object({
 export const Route = createFileRoute("/booking")({
   validateSearch: (
     search: Record<string, unknown>,
-  ): { package?: "mvp" | "production_ready" | "enterprise" } => {
+  ): { package?: "mvp" | "production_ready" | "enterprise"; services?: string } => {
     const pkg = typeof search?.package === "string" ? search.package : undefined;
-    if (pkg === "mvp" || pkg === "production_ready" || pkg === "enterprise") {
-      return { package: pkg };
-    }
-    return {};
+    const services = typeof search?.services === "string" ? search.services : undefined;
+    const validPkg =
+      pkg === "mvp" || pkg === "production_ready" || pkg === "enterprise" ? pkg : undefined;
+    return {
+      ...(validPkg ? { package: validPkg } : {}),
+      ...(services ? { services } : {}),
+    };
   },
   head: () => ({
     meta: [
@@ -49,7 +52,7 @@ function BookingPage() {
             title="Book your build"
             subtitle="Select a package, share your brief, and pay the 15% token to lock in your delivery slot."
           />
-          <BookingForm initialPackage={search?.package} />
+          <BookingForm initialPackage={search?.package} initialServices={search?.services} />
         </div>
       </section>
     </div>

@@ -23,7 +23,7 @@ export const PRICING: Record<
     tiers: [
       { price: "₹69,999", worth: "₹1,20,000" },
       { price: "₹1,99,999", worth: "₹3,40,000" },
-      { price: "Custom" },
+      { price: "₹3,99,999", worth: "₹6,80,000" },
     ],
   },
   USD: {
@@ -31,7 +31,7 @@ export const PRICING: Record<
     tiers: [
       { price: "$1,499", worth: "$2,600" },
       { price: "$4,999", worth: "$8,500" },
-      { price: "Custom" },
+      { price: "$9,999", worth: "$17,000" },
     ],
   },
   GBP: {
@@ -39,7 +39,7 @@ export const PRICING: Record<
     tiers: [
       { price: "£1,299", worth: "£2,200" },
       { price: "£4,299", worth: "£7,300" },
-      { price: "Custom" },
+      { price: "£8,599", worth: "£14,500" },
     ],
   },
   EUR: {
@@ -47,7 +47,7 @@ export const PRICING: Record<
     tiers: [
       { price: "€1,499", worth: "€2,600" },
       { price: "€4,999", worth: "€8,500" },
-      { price: "Custom" },
+      { price: "€9,999", worth: "€17,000" },
     ],
   },
   AED: {
@@ -55,7 +55,7 @@ export const PRICING: Record<
     tiers: [
       { price: "AED 5,499", worth: "AED 9,400" },
       { price: "AED 17,999", worth: "AED 30,600" },
-      { price: "Custom" },
+      { price: "AED 35,999", worth: "AED 61,000" },
     ],
   },
   SGD: {
@@ -63,7 +63,7 @@ export const PRICING: Record<
     tiers: [
       { price: "SGD 1,999", worth: "SGD 3,400" },
       { price: "SGD 6,499", worth: "SGD 11,000" },
-      { price: "Custom" },
+      { price: "SGD 12,999", worth: "SGD 22,000" },
     ],
   },
 };

@@ -12,6 +12,8 @@ import { mapRazorpayStatus, reconcilePayment } from "@/lib/payments/razorpay.ser
 import { validatePaymentTransition } from "@/lib/payments/payments";
 import { validateBookingTransition } from "@/lib/booking/booking";
 import { recordAudit } from "@/lib/services/audit.server";
+import type { CurrencyCode } from "@/lib/currency";
+import type { SelectedServiceItem } from "@/lib/pricing-services";
 
 const uuid = z.string().uuid();
 
@@ -42,6 +44,14 @@ const bookingInputSchema = z.object({
   company_website: optionalUrl,
   existing_app_url: optionalUrl,
   reference_links: referenceLinks,
+  selected_services: z
+    .array(
+      z.object({
+        serviceId: z.enum(["app", "web", "qa_uat", "beta_release", "maintenance"]),
+        planId: z.string().min(1).max(50),
+      }),
+    )
+    .optional(),
 });
 
 export type BookingInput = z.infer<typeof bookingInputSchema>;
@@ -72,15 +82,27 @@ export const createBooking = createServerFn({ method: "POST" })
       throw new Error("Invalid package tier");
     }
 
-    // Get pricing for the package + currency
-    const pricing = await getPricingForBooking(data.package, data.currency);
-    if (!pricing) {
-      throw new Error(`Pricing not available for ${data.package} in ${data.currency}`);
-    }
+    // Authoritative pricing calculation (Single service or Multi-service cart)
+    let fullAmountCents = 0;
+    let tokenAmountCents = 0;
+    const tokenPercentage = DEFAULT_TOKEN_PERCENTAGE; // 15%
 
-    const fullAmountCents = pricing.amountCents;
-    const tokenAmountCents = calculateTokenAmount(fullAmountCents, DEFAULT_TOKEN_PERCENTAGE);
-    const tokenPercentage = DEFAULT_TOKEN_PERCENTAGE;
+    if (data.selected_services && data.selected_services.length > 0) {
+      const { calculateAggregateProjectPricing } = await import("@/lib/pricing-services");
+      const aggregate = calculateAggregateProjectPricing(
+        data.selected_services as SelectedServiceItem[],
+        data.currency.toUpperCase() as CurrencyCode,
+      );
+      fullAmountCents = aggregate.totalAmountCents;
+      tokenAmountCents = aggregate.tokenAmountCents;
+    } else {
+      const pricing = await getPricingForBooking(data.package, data.currency);
+      if (!pricing) {
+        throw new Error(`Pricing not available for ${data.package} in ${data.currency}`);
+      }
+      fullAmountCents = pricing.amountCents;
+      tokenAmountCents = calculateTokenAmount(fullAmountCents, DEFAULT_TOKEN_PERCENTAGE);
+    }
 
     // Generate booking number
     const bookingNumber = await generateBookingNumber();

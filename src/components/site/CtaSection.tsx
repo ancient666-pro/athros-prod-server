@@ -1,25 +1,10 @@
 import { ArrowUpRight, Rocket } from "lucide-react";
-import { useNavigate } from "@tanstack/react-router";
-import { MagneticButton, Reveal } from "./primitives";
+import { MagneticButton, Reveal, scrollToSection } from "./primitives";
 
-const PHONE = "+13154820199";
-const BOOKING_URL =
-  import.meta.env.VITE_BOOKING_URL ?? "https://calendly.com/athros/discovery-call";
+const PHONE = "+91 8454094362";
+const PHONE_TEL = "+918454094362";
 
 export function CtaSection() {
-  const navigate = useNavigate();
-
-  const handleDiscoveryCall = () => {
-    const isMobile =
-      typeof window !== "undefined" &&
-      window.matchMedia("(max-width: 767px), (pointer: coarse)").matches;
-    if (isMobile) {
-      window.location.href = `tel:${PHONE}`;
-      return;
-    }
-    window.open(BOOKING_URL, "_blank", "noopener,noreferrer");
-  };
-
   return (
     <section id="contact" className="relative px-5 py-24 sm:py-32">
       <Reveal>
@@ -48,26 +33,34 @@ export function CtaSection() {
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-3">
               <MagneticButton
-                onClick={() =>
-                  navigate({ to: "/booking", search: { package: "production_ready" } })
-                }
+                href="#pricing"
+                onClick={(event) => {
+                  event.preventDefault();
+                  scrollToSection("#pricing");
+                }}
                 className="bg-gradient-nv text-[oklch(0.18_0.03_130)]"
               >
                 <Rocket className="h-4 w-4" />
                 Unleash Your Empire
               </MagneticButton>
               <MagneticButton
-                onClick={(event) => {
-                  event.preventDefault();
-                  handleDiscoveryCall();
-                }}
+                href={`tel:${PHONE_TEL}`}
                 variant="ghost"
                 className="border-[oklch(1_0_0/18%)] bg-[oklch(1_0_0/8%)] text-[oklch(0.98_0_0)]"
               >
-                Book a Discovery Call
+                Book a Strategy Call
                 <ArrowUpRight className="h-4 w-4" />
               </MagneticButton>
             </div>
+            <p className="mt-4 text-xs text-[oklch(0.82_0.01_260)]">
+              Direct Strategy Call:{" "}
+              <a
+                href={`tel:${PHONE_TEL}`}
+                className="font-medium text-[oklch(0.98_0_0)] underline hover:text-nv transition-colors"
+              >
+                {PHONE}
+              </a>
+            </p>
           </div>
         </div>
       </Reveal>

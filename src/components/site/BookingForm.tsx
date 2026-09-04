@@ -18,10 +18,24 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, CheckCircle2, Check, Flame, ShieldCheck, ArrowRight } from "lucide-react";
+import {
+  Loader2,
+  CheckCircle2,
+  Check,
+  Flame,
+  ShieldCheck,
+  ArrowRight,
+  Sparkles,
+} from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Reveal } from "./primitives";
+import { formatCurrencyAmount } from "@/lib/currency";
+import {
+  calculateAggregateProjectPricing,
+  type SelectedServiceItem,
+  type ServiceId,
+} from "@/lib/pricing-services";
 
 interface PackageTier {
   readonly value: "mvp" | "production_ready" | "enterprise";
@@ -36,7 +50,7 @@ const packageTiers: readonly PackageTier[] = [
     value: "mvp",
     label: "MVP Pack",
     description: "Validation · Investor demo · Early launch",
-    meta: "Delivered in 2 Days · Essential Backend + Auth",
+    meta: "Delivered in 3 Days · Essential Backend + Auth",
   },
   {
     value: "production_ready",
@@ -129,15 +143,24 @@ function calculateTokenBreakdown(fullPrice: string) {
 
 export function BookingForm({
   initialPackage: propPackage,
+  initialServices: propServices,
 }: {
   initialPackage?: "mvp" | "production_ready" | "enterprise";
+  initialServices?: string;
 } = {}) {
   let initialPkg = propPackage;
-  if (!initialPkg && typeof window !== "undefined") {
+  let initialServicesParam = propServices;
+  if (typeof window !== "undefined") {
     const params = new URLSearchParams(window.location.search);
-    const p = params.get("package");
-    if (p === "mvp" || p === "production_ready" || p === "enterprise") {
-      initialPkg = p;
+    if (!initialPkg) {
+      const p = params.get("package");
+      if (p === "mvp" || p === "production_ready" || p === "enterprise") {
+        initialPkg = p;
+      }
+    }
+    if (!initialServicesParam) {
+      const s = params.get("services");
+      if (s) initialServicesParam = s;
     }
   }
   const initialPackage = initialPkg ?? "production_ready";
@@ -161,6 +184,19 @@ export function BookingForm({
     currency: string;
     booking: { package: string; tokenAmount: number; fullAmount: number; currency: string };
   } | null>(null);
+
+  // Parse multi-service items
+  const multiServices: SelectedServiceItem[] = useMemo(() => {
+    if (!initialServicesParam) return [];
+    return initialServicesParam
+      .split(",")
+      .map((pair) => {
+        const [s, p] = pair.split(":");
+        if (!s || !p) return null;
+        return { serviceId: s as ServiceId, planId: p };
+      })
+      .filter((item): item is SelectedServiceItem => item !== null);
+  }, [initialServicesParam]);
 
   const form = useForm<BookingFormData>({
     resolver: zodResolver(bookingFormSchema),
@@ -231,6 +267,11 @@ export function BookingForm({
     const fullPrice = priced?.price ?? "$0";
     return calculateTokenBreakdown(fullPrice);
   }, [currentPackage.value, localized]);
+
+  const multiAggregate = useMemo(() => {
+    if (multiServices.length === 0) return null;
+    return calculateAggregateProjectPricing(multiServices, currentCurrency);
+  }, [multiServices, currentCurrency]);
 
   const handleSelectPackage = (tier: PackageTier) => {
     setSelectedPackage(tier);
@@ -372,6 +413,7 @@ export function BookingForm({
         company_website: data.company_website || undefined,
         existing_app_url: data.existing_app_url || undefined,
         reference_links: links,
+        selected_services: multiServices.length > 0 ? multiServices : undefined,
       };
 
       const result = await createBooking({ data: payload });
@@ -519,15 +561,44 @@ export function BookingForm({
               </div>
             </div>
 
+            {/* Multi-Service Selection Display if applicable */}
+            {multiAggregate && multiAggregate.items.length > 0 ? (
+              <div className="rounded-2xl border border-nv/30 bg-nv/5 p-4 space-y-2.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                    <Sparkles className="h-3.5 w-3.5 text-nv" /> Selected Project Services (
+                    {multiAggregate.items.length}):
+                  </span>
+                  <span className="text-[11.5px] font-mono text-muted-foreground">
+                    Estimated Delivery: {multiAggregate.estimatedTimeline.totalDaysText}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {multiAggregate.items.map((item) => (
+                    <span
+                      key={`${item.serviceId}-${item.planId}`}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border/80 bg-background px-3 py-1.5 text-xs text-foreground shadow-xs"
+                    >
+                      <span>{item.serviceIcon}</span>
+                      <span className="font-semibold">{item.planName}</span>
+                      <span className="text-muted-foreground">({item.priceFormatted})</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
             {/* Authoritative Financial Breakdown */}
-            {!pricingBreakdown.isCustom ? (
+            {!pricingBreakdown.isCustom || (multiAggregate && !multiAggregate.hasCustomPlan) ? (
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 pt-1">
                 <div className="rounded-2xl bg-secondary/50 p-3.5">
                   <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground block">
                     Total Project Value
                   </span>
                   <span className="font-display text-lg font-semibold text-foreground mt-0.5 block">
-                    {pricingBreakdown.fullPrice}
+                    {multiAggregate
+                      ? formatCurrencyAmount(multiAggregate.totalAmountCents, currentCurrency)
+                      : pricingBreakdown.fullPrice}
                   </span>
                   <span className="text-[11px] text-muted-foreground">Fixed Scope & Price</span>
                 </div>
@@ -537,7 +608,9 @@ export function BookingForm({
                     Token to Start (15%)
                   </span>
                   <span className="font-display text-lg font-bold text-foreground mt-0.5 block">
-                    {pricingBreakdown.tokenPrice}
+                    {multiAggregate
+                      ? formatCurrencyAmount(multiAggregate.tokenAmountCents, currentCurrency)
+                      : pricingBreakdown.tokenPrice}
                   </span>
                   <span className="text-[11px] text-muted-foreground">Due now to secure slot</span>
                 </div>
@@ -547,10 +620,32 @@ export function BookingForm({
                     Remaining Balance (85%)
                   </span>
                   <span className="font-display text-lg font-semibold text-foreground mt-0.5 block">
-                    {pricingBreakdown.balancePrice}
+                    {multiAggregate
+                      ? formatCurrencyAmount(multiAggregate.balanceAmountCents, currentCurrency)
+                      : pricingBreakdown.balancePrice}
                   </span>
                   <span className="text-[11px] text-muted-foreground">Due on milestones</span>
                 </div>
+
+                {multiAggregate?.hasRecurringPlan && multiAggregate.maintenanceMonthlyCents > 0 ? (
+                  <div className="col-span-1 sm:col-span-3 rounded-2xl border border-border/60 bg-secondary/30 p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+                    <div>
+                      <span className="font-semibold text-foreground">
+                        Recurring Maintenance Retainer:
+                      </span>
+                      <span className="text-muted-foreground ml-1.5">
+                        Billed monthly after deployment (strictly excluded from 15% project token)
+                      </span>
+                    </div>
+                    <span className="font-mono font-bold text-foreground">
+                      {formatCurrencyAmount(
+                        multiAggregate.maintenanceMonthlyCents,
+                        currentCurrency,
+                      )}
+                      /mo
+                    </span>
+                  </div>
+                ) : null}
               </div>
             ) : (
               <div className="rounded-2xl bg-secondary/50 p-4 text-center">
@@ -763,7 +858,11 @@ export function BookingForm({
                   </>
                 ) : (
                   <>
-                    Proceed to Pay 15% Token ({pricingBreakdown.tokenPrice})
+                    Proceed to Pay 15% Token (
+                    {multiAggregate
+                      ? formatCurrencyAmount(multiAggregate.tokenAmountCents, currentCurrency)
+                      : pricingBreakdown.tokenPrice}
+                    )
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 )}

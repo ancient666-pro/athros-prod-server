@@ -112,12 +112,12 @@ export const AUTHORITATIVE_PRICING: Record<
     SGD: { amountCents: 649900, compareAtCents: 1100000 },
   },
   enterprise: {
-    INR: { amountCents: 0 },
-    USD: { amountCents: 0 },
-    GBP: { amountCents: 0 },
-    EUR: { amountCents: 0 },
-    AED: { amountCents: 0 },
-    SGD: { amountCents: 0 },
+    INR: { amountCents: 39999900, compareAtCents: 68000000 },
+    USD: { amountCents: 999900, compareAtCents: 1700000 },
+    GBP: { amountCents: 859900, compareAtCents: 1450000 },
+    EUR: { amountCents: 999900, compareAtCents: 1700000 },
+    AED: { amountCents: 3599900, compareAtCents: 6100000 },
+    SGD: { amountCents: 1299900, compareAtCents: 2200000 },
   },
 };
 

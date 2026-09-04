@@ -148,6 +148,7 @@ export function SectionHeading({
 type MagneticProps = ComponentPropsWithoutRef<"a"> & {
   variant?: "primary" | "ghost" | "fire";
   children: ReactNode;
+  shimmer?: boolean;
 };
 
 export function MagneticButton({
@@ -155,6 +156,7 @@ export function MagneticButton({
   className,
   children,
   onClick,
+  shimmer,
   ...props
 }: MagneticProps) {
   const ref = useRef<HTMLAnchorElement>(null);
@@ -198,6 +200,9 @@ export function MagneticButton({
       {...props}
     >
       <span className="relative z-10 flex items-center gap-2">{children}</span>
+      {shimmer ? (
+        <span className="pointer-events-none absolute inset-y-0 w-full bg-[linear-gradient(100deg,transparent_0%,oklch(1_0_0/40%)_50%,transparent_100%)] animate-shimmer" />
+      ) : null}
       <span className="absolute inset-0 -translate-x-full bg-[linear-gradient(100deg,transparent,oklch(1_0_0/35%),transparent)] transition-transform duration-700 group-hover:translate-x-full" />
     </a>
   );

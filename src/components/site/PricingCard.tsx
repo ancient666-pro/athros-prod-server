@@ -14,7 +14,19 @@ export type PricingTier = {
   cta: string;
   features: string[];
   featured?: boolean;
+  deliveryDuration?: string;
+  commercialStatus?: "authoritative" | "scope_baseline" | "custom_quote";
+  commercialNote?: string;
+  serviceId?: string;
+  planId?: string;
 };
+
+export interface PricingCardProps {
+  tier: PricingTier;
+  delay?: number;
+  isSelectedInCart?: boolean;
+  onToggleCart?: () => void;
+}
 
 function FeatureList({ items, tone }: { items: string[]; tone: "nv" | "fire" }) {
   return (
@@ -41,12 +53,23 @@ function getPackageKey(name: string): "mvp" | "production_ready" | "enterprise" 
   return "production_ready";
 }
 
-export function PricingCard({ tier, delay = 0 }: { tier: PricingTier; delay?: number }) {
+export function PricingCard({
+  tier,
+  delay = 0,
+  isSelectedInCart = false,
+  onToggleCart,
+}: PricingCardProps) {
   const tone = tier.featured ? "fire" : "nv";
   const navigate = useNavigate();
   const packageKey = getPackageKey(tier.name);
 
-  const handleClick = () => {
+  const handleClick = (e?: React.MouseEvent) => {
+    if (onToggleCart) {
+      e?.preventDefault();
+      e?.stopPropagation();
+      onToggleCart();
+      return;
+    }
     navigate({ to: "/booking", search: { package: packageKey } });
   };
 
@@ -82,13 +105,24 @@ export function PricingCard({ tier, delay = 0 }: { tier: PricingTier; delay?: nu
               >
                 {tier.name}
               </h3>
-              {tier.featured ? (
-                <span className="relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-[oklch(0.2_0.03_40)] px-3 py-1 text-[10.5px] font-semibold tracking-wide text-[oklch(0.95_0.1_85)]">
-                  <Flame className="h-3 w-3" />
-                  MOST POPULAR
-                  <span className="pointer-events-none absolute inset-y-0 w-full bg-[linear-gradient(100deg,transparent_0%,oklch(1_0_0/45%)_50%,transparent_100%)] animate-shimmer" />
-                </span>
-              ) : null}
+              <div className="flex items-center gap-1.5">
+                {tier.commercialStatus === "scope_baseline" ? (
+                  <span className="rounded-full border border-border bg-secondary/80 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                    Baseline Rate
+                  </span>
+                ) : null}
+                {isSelectedInCart ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-nv/20 px-2.5 py-0.5 text-[10.5px] font-semibold text-nv">
+                    <Check className="h-3 w-3" /> In Project
+                  </span>
+                ) : tier.featured ? (
+                  <span className="relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full bg-[oklch(0.2_0.03_40)] px-3 py-1 text-[10.5px] font-semibold tracking-wide text-[oklch(0.95_0.1_85)]">
+                    <Flame className="h-3 w-3" />
+                    MOST POPULAR
+                    <span className="pointer-events-none absolute inset-y-0 w-full bg-[linear-gradient(100deg,transparent_0%,oklch(1_0_0/45%)_50%,transparent_100%)] animate-shimmer" />
+                  </span>
+                ) : null}
+              </div>
             </div>
 
             {tier.worth ? (
@@ -133,20 +167,35 @@ export function PricingCard({ tier, delay = 0 }: { tier: PricingTier; delay?: nu
               {tier.meta}
             </p>
 
+            {tier.deliveryDuration ? (
+              <div className="mt-3 inline-flex items-center gap-1.5 rounded-md bg-secondary/70 px-2.5 py-1 text-[11px] font-medium text-foreground">
+                <span className="text-nv">⏱</span>
+                <span>{tier.deliveryDuration}</span>
+              </div>
+            ) : null}
+
             <MagneticButton
               href={`/booking?package=${packageKey}`}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                navigate({ to: "/booking", search: { package: packageKey } });
+                handleClick(e);
               }}
-              variant={tier.featured ? "primary" : "ghost"}
+              variant={isSelectedInCart ? "fire" : tier.featured ? "primary" : "ghost"}
               className={cn(
                 "mt-6 w-full",
-                tier.featured && "bg-[oklch(0.18_0.03_40)] text-[oklch(0.96_0.08_85)]",
+                isSelectedInCart
+                  ? "bg-nv text-[oklch(0.18_0.03_130)] shadow-[0_4px_20px_-4px_var(--nv)]"
+                  : tier.featured
+                    ? "bg-[oklch(0.18_0.03_40)] text-[oklch(0.96_0.08_85)]"
+                    : "",
               )}
             >
-              {tier.cta}
+              {isSelectedInCart
+                ? "✓ In Your Project"
+                : onToggleCart
+                  ? `+ Add ${tier.name}`
+                  : tier.cta}
               <ArrowRight className="ml-2 h-3.5 w-3.5" />
             </MagneticButton>
 

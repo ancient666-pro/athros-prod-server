@@ -63,9 +63,11 @@ export function WhyUs() {
             <Reveal key={card.title} delay={index * 0.05}>
               <article className="glass-card group h-full p-6 transition-transform duration-500 hover:-translate-y-1.5">
                 <div className="relative z-10">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl border border-nv/30 bg-nv-soft/70 text-[oklch(0.35_0.12_130)] transition-colors group-hover:bg-gradient-nv">
-                    <card.icon className="h-4.5 w-4.5" />
-                  </span>
+                  <div className="relative flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-nv/35 bg-nv-soft/75 text-nv shadow-[0_2px_8px_-2px_var(--nv-soft)] backdrop-blur-sm transition-all duration-300 group-hover:border-nv/70 group-hover:shadow-[0_4px_14px_-3px_var(--nv)]">
+                    <card.icon className="relative z-10 h-5 w-5 text-nv transition-transform duration-300 group-hover:scale-105 stroke-[1.8]" />
+                    {/* Subtle icon reflection shimmer on card hover */}
+                    <span className="pointer-events-none absolute inset-0 -translate-x-full bg-[linear-gradient(115deg,transparent_20%,oklch(1_0_0/45%)_50%,transparent_80%)] opacity-0 transition-all duration-700 ease-out group-hover:translate-x-full group-hover:opacity-100" />
+                  </div>
                   <h3 className="mt-5 text-base font-semibold">{card.title}</h3>
                   <p className="mt-2 text-[13.5px] leading-relaxed text-muted-foreground">
                     {card.body}

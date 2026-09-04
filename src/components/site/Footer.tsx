@@ -75,13 +75,13 @@ export function Footer() {
               </li>
               <li className="flex items-start gap-2">
                 <Phone className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                <a href="tel:+13154820199" className="hover:text-foreground">
-                  +1 (315) 482-0199
+                <a href="tel:+918454094362" className="hover:text-foreground">
+                  +91 8454094362
                 </a>
               </li>
               <li className="flex items-start gap-2">
                 <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-                <span>44 Tehama Street, San Francisco, CA</span>
+                <span>Altamount Road, Mumbai, IN</span>
               </li>
             </ul>
           </div>

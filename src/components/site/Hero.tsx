@@ -1,9 +1,8 @@
 import { motion } from "motion/react";
 import { ArrowUpRight, Rocket } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "@tanstack/react-router";
 import { AICore } from "./AICore";
-import { MagneticButton, Reveal } from "./primitives";
+import { MagneticButton, Reveal, scrollToSection } from "./primitives";
 
 const rotating = ["Build.", "Launch.", "Scale.", "Powered by AI."];
 
@@ -41,8 +40,6 @@ function RotatingWord() {
 }
 
 export function Hero() {
-  const navigate = useNavigate();
-
   return (
     <section id="home" className="noise relative overflow-hidden pt-32 pb-10 sm:pt-40">
       <div className="pointer-events-none absolute inset-0 -z-10">
@@ -86,24 +83,17 @@ export function Hero() {
           <Reveal delay={0.32}>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <MagneticButton
-                href="/booking?package=production_ready"
+                href="#pricing"
                 onClick={(event) => {
                   event.preventDefault();
-                  navigate({ to: "/booking", search: { package: "production_ready" } });
+                  scrollToSection("#pricing");
                 }}
               >
                 <Rocket className="h-4 w-4" />
                 Unleash Your Empire
               </MagneticButton>
-              <MagneticButton
-                href="/booking?package=production_ready"
-                onClick={(event) => {
-                  event.preventDefault();
-                  navigate({ to: "/booking", search: { package: "production_ready" } });
-                }}
-                variant="ghost"
-              >
-                Book Strategy Call
+              <MagneticButton href="tel:+918454094362" variant="ghost">
+                Book a Strategy Call
                 <ArrowUpRight className="h-4 w-4" />
               </MagneticButton>
             </div>
